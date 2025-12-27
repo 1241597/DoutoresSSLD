@@ -1,4 +1,4 @@
-package com.example.lp3_grupo1;
+package com.example.lp1;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
