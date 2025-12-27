@@ -1,4 +1,4 @@
-# LP3 Grupo 1
+# LP1
 
 Sistema de Gestão desenvolvido em Java com arquitetura MVC.
 
