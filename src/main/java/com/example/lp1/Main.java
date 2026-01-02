@@ -1,12 +1,15 @@
 package com.example.lp1;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.example.lp1.Model.medico;
+import com.example.lp1.Utils.Utils;
 
-@SpringBootApplication
+import java.io.File;
+
 public class Main {
-
     public static void main(String[] args) {
-        
+        Utils utils = new Utils();
+        utils.carregarFicheiros();
+
+
     }
 }
