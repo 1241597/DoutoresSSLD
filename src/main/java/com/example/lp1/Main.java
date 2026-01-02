@@ -1,12 +1,15 @@
 package com.example.lp1;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.example.lp1.Model.medico;
+import com.example.lp1.Utils.Utils;
 
-@SpringBootApplication
+import java.io.File;
+
 public class Main {
-
     public static void main(String[] args) {
+        Utils utils = new Utils();
+        utils.carregarFicheiros();
+        
         System.out.println("-----Simulador Dia a Dia-----");
         System.out.println("1 - Avançar Hora");
         System.out.println("2 - Inserir utente");
