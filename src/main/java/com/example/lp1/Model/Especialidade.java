@@ -1,10 +1,10 @@
 package com.example.lp1.Model;
 
-public class especialidade {
+public class Especialidade {
     private String codigo;
     private String nome;
 
-    public especialidade(String codigo, String nome) {
+    public Especialidade(String codigo, String nome) {
         this.codigo = codigo;
         this.nome = nome;
     }

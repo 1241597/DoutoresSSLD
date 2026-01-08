@@ -1,25 +1,25 @@
 package com.example.lp1.Utils;
 
-import com.example.lp1.DAL.especialidadeDAL;
-import com.example.lp1.DAL.medicoDAL;
-import com.example.lp1.DAL.sintomaDAL;
-import com.example.lp1.Model.especialidade;
-import com.example.lp1.Model.medico;
-import com.example.lp1.Model.sintoma;
+import com.example.lp1.DAL.EspecialidadeDAL;
+import com.example.lp1.DAL.MedicoDAL;
+import com.example.lp1.DAL.SintomaDAL;
+import com.example.lp1.Model.Especialidade;
+import com.example.lp1.Model.Medico;
+import com.example.lp1.Model.Sintoma;
 
 public class Utils {
 
     // --- VARIÁVEIS DE INSTÂNCIA PARA GUARDAR OS DADOS ---
     // Como não há Repositorio, os dados ficam guardados dentro deste objeto Utils
-    private especialidade[] especialidades;
-    private medico[] medicos;
-    private sintoma[] sintomas;
+    private Especialidade[] especialidades;
+    private Medico[] medicos;
+    private Sintoma[] sintomas;
 
     public Utils() {
         // Inicializar com arrays vazios para evitar NullPointerException
-        this.especialidades = new especialidade[0];
-        this.medicos = new medico[0];
-        this.sintomas = new sintoma[0];
+        this.especialidades = new Especialidade[0];
+        this.medicos = new Medico[0];
+        this.sintomas = new Sintoma[0];
     }
 
     /**
@@ -27,9 +27,9 @@ public class Utils {
      */
     public void carregarFicheiros() {
         // 1. Instanciar as DALs
-        especialidadeDAL dalEsp = new especialidadeDAL();
-        medicoDAL dalMed = new medicoDAL();
-        sintomaDAL dalSint = new sintomaDAL();
+        EspecialidadeDAL dalEsp = new EspecialidadeDAL();
+        MedicoDAL dalMed = new MedicoDAL();
+        SintomaDAL dalSint = new SintomaDAL();
 
         // 2. Carregar os dados para as variáveis locais
         this.especialidades = dalEsp.carregarEspecialidades();
@@ -50,7 +50,7 @@ public class Utils {
         if (this.especialidades == null || this.especialidades.length == 0) return;
 
         for (int i = 0; i < this.medicos.length; i++) {
-            medico m = this.medicos[i];
+            Medico m = this.medicos[i];
             if (m != null) {
                 // Código que veio do ficheiro (ex: "CARD")
                 String codProcurar = m.getEspecialidade().getCodigo();
@@ -73,9 +73,9 @@ public class Utils {
         if (this.especialidades == null || this.especialidades.length == 0) return;
 
         for (int i = 0; i < this.sintomas.length; i++) {
-            sintoma s = this.sintomas[i];
+            Sintoma s = this.sintomas[i];
             if (s != null) {
-                especialidade[] espsDoSintoma = s.getEspecialidades();
+                Especialidade[] espsDoSintoma = s.getEspecialidades();
 
                 // Percorrer as especialidades deste sintoma
                 for (int k = 0; k < espsDoSintoma.length; k++) {
@@ -97,4 +97,6 @@ public class Utils {
             }
         }
     }
+
+
 }

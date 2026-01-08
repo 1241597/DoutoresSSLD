@@ -1,14 +1,11 @@
-package com.example.lp1;
-
-import com.example.lp1.Utils.Utils;
+package com.example.lp1.View;
 
 import java.util.Scanner;
 
-public class Main {
-    public static void main(String[] args) {
-        Utils utils = new Utils();
-        utils.carregarFicheiros();
+public class ConfiguracaoView { // Nome da classe com Maiúscula (convenção Java)
 
+    // O código tem de estar dentro de um método para funcionar
+    public void executarMenu() {
         Scanner scanner = new Scanner(System.in);
         int opcao = -1;
 
@@ -21,6 +18,7 @@ public class Main {
             System.out.print("0. Sair | Escolha uma opção: ");
 
             try {
+                // Lê a linha toda e converte para int (evita erros de buffer)
                 opcao = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 opcao = -1;
@@ -38,17 +36,19 @@ public class Main {
                     break;
                 case 3:
                     System.out.println(">> A abrir consulta de Estatísticas e Notificações...");
+                    // menuEstatisticas();
                     break;
                 case 4:
                     System.out.println(">> A abrir as Configurações...");
-                    // menuGestao();
+                    // menuConfig();
                     break;
-                case 5:
-                    System.out.println(">> A desligar o programa...");
+                case 0: // Alterado de 5 para 0 para coincidir com o texto "0. Sair"
+                    System.out.println(">> A guardar dados e a desligar o programa...");
+                    // Aqui deves chamar a função de guardar ficheiros antes de sair
                     System.exit(0);
                     break;
                 default:
-                    if(opcao != -1) System.out.println("Opção inválida.");
+                    if (opcao != -1) System.out.println("Opção inválida.");
             }
         } while (opcao != 0);
     }
