@@ -1,24 +1,49 @@
 package com.example.lp1.View;
 
+import com.example.lp1.Controller.ConfiguracaoController;
+import com.example.lp1.Utils.Utils;
+
 import java.util.Scanner;
 
-public class ConfiguracaoView { // Nome da classe com Maiúscula (convenção Java)
+public class ConfiguracaoView {
+    private Scanner scanner = new Scanner(System.in);
+    private ConfiguracaoController controller = new ConfiguracaoController();
 
-    // O código tem de estar dentro de um método para funcionar
-    public void executarMenu() {
+    /**
+     * PONTO DE ENTRADA (Chamado pelo Main).
+     * 1. Pede a password.
+     * 2. Se correta -> Abre o menu.
+     * 3. Se incorreta -> Mostra erro e volta ao Main.
+     */
+    public void iniciar() {
+        Utils.mostrarMensagem("\n=== ACESSO RESTRITO ===");
+        System.out.print("Insira a password de administrador: ");
+        String input = scanner.nextLine();
+
+        try {
+            controller.autenticar(input);
+
+            Utils.mostrarMensagem(">> Acesso Autorizado.");
+            executarMenuConfiguracoes();
+
+        } catch (Exception e) {
+            Utils.mostrarMensagem("[ERRO] " + e.getMessage());
+        }
+    }
+
+    public void executarMenuConfiguracoes() {
         Scanner scanner = new Scanner(System.in);
         int opcao = -1;
 
         do {
-            // --- MENU VISUAL (3 Linhas) ---
-            System.out.println("\n1. Gestão de Médicos, Especialidades e Sintomas.");
-            System.out.println("2. Gestão do funcionamento do Hospital.");
-            System.out.println("3. Consultar Estatísticas e Notificações.");
-            System.out.println("4. Configurações.");
-            System.out.print("0. Sair | Escolha uma opção: ");
+            System.out.println("\n1. Gestão de Ficheiros.");
+            System.out.println("2. Gestão de Tempos de Consulta .");
+            System.out.println("3. Regras de Descanso dos Médicos.");
+            System.out.println("4. Dinâmica da Urgência dos Sintomas.");
+            System.out.println("5. Segurança.");
+            System.out.print("0. Voltar | Escolha uma opção: ");
 
             try {
-                // Lê a linha toda e converte para int (evita erros de buffer)
                 opcao = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 opcao = -1;
@@ -27,29 +52,48 @@ public class ConfiguracaoView { // Nome da classe com Maiúscula (convenção Ja
 
             switch (opcao) {
                 case 1:
-                    System.out.println(">> A abrir gestão de Medicos, Especialidades e Sintomas...");
+                    System.out.println(">> A abrir gestão de Ficheiros...");
                     // menuGestao();
                     break;
                 case 2:
-                    System.out.println(">> A abrir gestão do funcionamento do Hospital...");
+                    System.out.println(">> A abrir gestão dos Tempos de Consulta...");
                     // menuSimulacao();
                     break;
                 case 3:
-                    System.out.println(">> A abrir consulta de Estatísticas e Notificações...");
+                    System.out.println(">> A abrir gestão das Regras de Descanso dos Médicos...");
                     // menuEstatisticas();
                     break;
                 case 4:
-                    System.out.println(">> A abrir as Configurações...");
+                    System.out.println(">> A abrir as Configurações da Dinâmica da Urgência dos Sintomas...");
                     // menuConfig();
                     break;
-                case 0: // Alterado de 5 para 0 para coincidir com o texto "0. Sair"
-                    System.out.println(">> A guardar dados e a desligar o programa...");
-                    // Aqui deves chamar a função de guardar ficheiros antes de sair
-                    System.exit(0);
+                case 5:
+                    System.out.println(">> A abrir as Configurações de Segurança...");
+                    tratarAlteracaoPassword();
                     break;
+                case 0:
+                    System.out.println(">> A voltar para o menu principal...");
+                    return;
                 default:
                     if (opcao != -1) System.out.println("Opção inválida.");
             }
         } while (opcao != 0);
+    }
+
+    /**
+     * Lógica visual para alterar a password (Opção 5).
+     */
+    private void tratarAlteracaoPassword() {
+        System.out.println("\n--- ALTERAR PASSWORD ---");
+        System.out.print("Insira a nova password: ");
+        String novaPass = scanner.nextLine();
+
+        try {
+            // Manda o controller alterar
+            controller.alterarPassword(novaPass);
+            Utils.mostrarMensagem(">> Password alterada e gravada com sucesso!");
+        } catch (Exception e) {
+            Utils.mostrarMensagem("[ERRO] " + e.getMessage());
+        }
     }
 }

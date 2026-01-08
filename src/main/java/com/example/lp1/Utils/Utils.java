@@ -98,5 +98,13 @@ public class Utils {
         }
     }
 
-
+    /**
+     * Imprime uma mensagem na consola.
+     * Centraliza o uso de System.out.println.
+     *
+     * @param mensagem O texto a ser exibido.
+     */
+    public static void mostrarMensagem(String mensagem) {
+        System.out.println(mensagem);
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.lp1;
 
 import com.example.lp1.Utils.Utils;
+import com.example.lp1.View.ConfiguracaoView;
 
 import java.util.Scanner;
 
@@ -41,9 +42,10 @@ public class Main {
                     break;
                 case 4:
                     System.out.println(">> A abrir as Configurações...");
-                    // menuGestao();
+                    ConfiguracaoView configuracaoView = new ConfiguracaoView();
+                    configuracaoView.iniciar();
                     break;
-                case 5:
+                case 0:
                     System.out.println(">> A desligar o programa...");
                     System.exit(0);
                     break;

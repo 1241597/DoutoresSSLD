@@ -13,7 +13,6 @@ public class EspecialidadeDAL {
      * Usa a lógica de expandir o array conforme necessário.
      */
     public Especialidade[] carregarEspecialidades() {
-        // Começa com um tamanho arbitrário (ex: 50 ou 100)
         Especialidade[] especialidadesTemp = new Especialidade[50];
         int index = 0;
 
