@@ -2,11 +2,11 @@ package com.example.lp1.Model;
 
 import java.util.Arrays;
 
-public class utente {
+public class Utente {
     private String nome;
-    private sintoma[] sintomas;
+    private Sintoma[] sintomas;
 
-    public utente(String nome, sintoma[] sintomas) {
+    public Utente(String nome, Sintoma[] sintomas) {
         this.nome = nome;
         this.sintomas = sintomas;
     }
@@ -19,11 +19,11 @@ public class utente {
         this.nome = nome;
     }
 
-    public sintoma[] getSintomas() {
+    public Sintoma[] getSintomas() {
         return sintomas;
     }
 
-    public void setSintomas(sintoma[] sintomas) {
+    public void setSintomas(Sintoma[] sintomas) {
         this.sintomas = sintomas;
     }
 

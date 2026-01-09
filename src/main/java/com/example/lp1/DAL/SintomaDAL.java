@@ -1,21 +1,21 @@
 package com.example.lp1.DAL;
 
-import com.example.lp1.Model.sintoma;
-import com.example.lp1.Model.especialidade;
+import com.example.lp1.Model.Sintoma;
+import com.example.lp1.Model.Especialidade;
 import com.example.lp1.Utils.Enums.nivelUrgencia; // Importar o Enum
 import java.io.*;
 
-public class sintomaDAL {
+public class SintomaDAL {
 
     private static final String CAMINHO_FICHEIRO = "Ficheiros/sintomas.txt";
     private static final String SEPARADOR = ";";
 
-    public sintoma[] carregarSintomas() {
-        sintoma[] sintomasTemp = new sintoma[50];
+    public Sintoma[] carregarSintomas() {
+        Sintoma[] sintomasTemp = new Sintoma[50];
         int index = 0;
 
         File file = new File(CAMINHO_FICHEIRO);
-        if (!file.exists()) return new sintoma[0];
+        if (!file.exists()) return new Sintoma[0];
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String linha;
@@ -47,15 +47,15 @@ public class sintomaDAL {
 
                         // Ler especialidades (parte dinâmica)
                         int qtdEspecialidades = partes.length - 2;
-                        especialidade[] listaEsp = new especialidade[qtdEspecialidades];
+                        Especialidade[] listaEsp = new Especialidade[qtdEspecialidades];
 
                         for (int i = 0; i < qtdEspecialidades; i++) {
                             String sigla = partes[i + 2].trim();
-                            listaEsp[i] = new especialidade(sigla, "Indefinido");
+                            listaEsp[i] = new Especialidade(sigla, "Indefinido");
                         }
 
                         // Criar o objeto com o Enum
-                        sintoma s = new sintoma(nome, urgenciaEnum, listaEsp);
+                        Sintoma s = new Sintoma(nome, urgenciaEnum, listaEsp);
                         sintomasTemp[index++] = s;
                     }
                 }
@@ -64,17 +64,17 @@ public class sintomaDAL {
             System.out.println("Erro ao ler sintomas: " + e.getMessage());
         }
 
-        sintoma[] resultado = new sintoma[index];
+        Sintoma[] resultado = new Sintoma[index];
         System.arraycopy(sintomasTemp, 0, resultado, 0, index);
         return resultado;
     }
 
-    public void gravarSintomas(sintoma[] lista) {
+    public void gravarSintomas(Sintoma[] lista) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(CAMINHO_FICHEIRO, false))) {
 
             for (int i = 0; i < lista.length; i++) {
                 if (lista[i] != null) {
-                    sintoma s = lista[i];
+                    Sintoma s = lista[i];
 
                     // --- CONVERSÃO DO ENUM PARA TEXTO BONITO ---
                     // O enum devolve "VERMELHA". Nós queremos "Vermelha" (para o ficheiro ficar igual)
@@ -84,7 +84,7 @@ public class sintomaDAL {
                     // Montar a linha
                     String linha = s.getNome() + SEPARADOR + corFormatada;
 
-                    especialidade[] esps = s.getEspecialidades();
+                    Especialidade[] esps = s.getEspecialidades();
                     if (esps != null) {
                         for (int j = 0; j < esps.length; j++) {
                             if (esps[j] != null) {
@@ -104,8 +104,8 @@ public class sintomaDAL {
         }
     }
 
-    private sintoma[] expandirArray(sintoma[] original) {
-        sintoma[] novo = new sintoma[original.length * 2];
+    private Sintoma[] expandirArray(Sintoma[] original) {
+        Sintoma[] novo = new Sintoma[original.length * 2];
         System.arraycopy(original, 0, novo, 0, original.length);
         return novo;
     }

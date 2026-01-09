@@ -1,13 +1,13 @@
 package com.example.lp1.Model;
 
-public class medico {
+public class Medico {
     private String nome;
-    private especialidade especialidade;
+    private Especialidade especialidade;
     private double horaEntrada;
     private double horaSaida;
     private double salarioHora;
 
-    public medico(String nome, especialidade especialidade, double horaEntrada, double horaSaida, double salarioHora) {
+    public Medico(String nome, Especialidade especialidade, double horaEntrada, double horaSaida, double salarioHora) {
         this.nome = nome;
         this.especialidade = especialidade;
         this.horaEntrada = horaEntrada;
@@ -23,11 +23,11 @@ public class medico {
         this.nome = nome;
     }
 
-    public especialidade getEspecialidade() {
+    public Especialidade getEspecialidade() {
         return especialidade;
     }
 
-    public void setEspecialidade(especialidade especialidade) {
+    public void setEspecialidade(Especialidade especialidade) {
         this.especialidade = especialidade;
     }
 

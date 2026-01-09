@@ -1,15 +1,14 @@
 package com.example.lp1.Model;
 
-import com.example.lp1.Utils.Enums; // Importar o Enum
 import com.example.lp1.Utils.Enums.nivelUrgencia; // Importar para usar o nome curto
 import java.util.Arrays;
 
-public class sintoma {
+public class Sintoma {
     private String nome;
     private nivelUrgencia urgencia; // Agora é um Enum, não um int
-    private especialidade[] especialidades;
+    private Especialidade[] especialidades;
 
-    public sintoma(String nome, nivelUrgencia urgencia, especialidade[] especialidades) {
+    public Sintoma(String nome, nivelUrgencia urgencia, Especialidade[] especialidades) {
         this.nome = nome;
         this.urgencia = urgencia;
         this.especialidades = especialidades;
@@ -32,11 +31,11 @@ public class sintoma {
         this.urgencia = urgencia;
     }
 
-    public especialidade[] getEspecialidades() {
+    public Especialidade[] getEspecialidades() {
         return especialidades;
     }
 
-    public void setEspecialidades(especialidade[] especialidades) {
+    public void setEspecialidades(Especialidade[] especialidades) {
         this.especialidades = especialidades;
     }
 

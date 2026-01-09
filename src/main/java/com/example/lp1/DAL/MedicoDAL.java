@@ -1,10 +1,10 @@
 package com.example.lp1.DAL;
 
-import com.example.lp1.Model.medico;
-import com.example.lp1.Model.especialidade;
+import com.example.lp1.Model.Medico;
+import com.example.lp1.Model.Especialidade;
 import java.io.*;
 
-public class medicoDAL {
+public class MedicoDAL {
 
     private static final String CAMINHO_FICHEIRO = "Ficheiros/medicos.txt";
     private static final String SEPARADOR = ";";
@@ -12,14 +12,14 @@ public class medicoDAL {
     /**
      * Carrega os médicos do ficheiro para um vetor.
      */
-    public medico[] carregarMedicos() {
+    public Medico[] carregarMedicos() {
         // 1. Array inicial temporário
-        medico[] medicosTemp = new medico[50];
+        Medico[] medicosTemp = new Medico[50];
         int index = 0;
 
         File file = new File(CAMINHO_FICHEIRO);
         if (!file.exists()) {
-            return new medico[0];
+            return new Medico[0];
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -50,10 +50,10 @@ public class medicoDAL {
                         // --- CRIAÇÃO DO OBJETO ESPECIALIDADE ---
                         // Como o ficheiro só tem o código "CARD", criamos um objeto com o código.
                         // O nome fica "Indefinido" porque não está neste ficheiro de texto.
-                        especialidade espObj = new especialidade(codEspecialidade, "Indefinido");
+                        Especialidade espObj = new Especialidade(codEspecialidade, "Indefinido");
 
                         // --- CRIAÇÃO DO OBJETO MEDICO ---
-                        medico m = new medico(nome, espObj, hEntrada, hSaida, salario);
+                        Medico m = new Medico(nome, espObj, hEntrada, hSaida, salario);
 
                         // Guardar no vetor
                         medicosTemp[index++] = m;
@@ -68,7 +68,7 @@ public class medicoDAL {
         }
 
         // Criar array final com tamanho exato
-        medico[] resultado = new medico[index];
+        Medico[] resultado = new Medico[index];
         System.arraycopy(medicosTemp, 0, resultado, 0, index);
 
         return resultado;
@@ -77,8 +77,8 @@ public class medicoDAL {
     /**
      * Expande o array para o dobro do tamanho.
      */
-    private medico[] expandirArray(medico[] original) {
-        medico[] novo = new medico[original.length * 2];
+    private Medico[] expandirArray(Medico[] original) {
+        Medico[] novo = new Medico[original.length * 2];
         System.arraycopy(original, 0, novo, 0, original.length);
         return novo;
     }
@@ -86,7 +86,7 @@ public class medicoDAL {
     /**
      * Grava o vetor de médicos no ficheiro.
      */
-    public void gravarMedicos(medico[] lista) {
+    public void gravarMedicos(Medico[] lista) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(CAMINHO_FICHEIRO, false))) {
 
             for (int i = 0; i < lista.length; i++) {

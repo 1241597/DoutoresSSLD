@@ -1,0 +1,2 @@
+DIRETORIO=Ficheiros\
+SEPARADOR=:
