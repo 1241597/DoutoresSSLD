@@ -1,28 +1,30 @@
 package com.example.lp1.Controller;
 
 import com.example.lp1.BLL.ConfiguracaoBLL;
+import com.example.lp1.Model.Configuracao;
 
 public class ConfiguracaoController {
 
-    private ConfiguracaoBLL bll;
+    // INICIALIZAÇÃO DIRETA: O Java faz 'new' automaticamente quando crias o Controller
+    private ConfiguracaoBLL bll = new ConfiguracaoBLL();
 
-    public ConfiguracaoController() {
-        this.bll = new ConfiguracaoBLL();
-    }
+    // --- Autenticação ---
 
-    /**
-     * Valida a password de entrada.
-     * @throws Exception Se a password estiver errada.
-     */
     public void autenticar(String password) throws Exception {
         bll.autenticar(password);
     }
 
-    /**
-     * Altera a password.
-     * @throws Exception Se a nova password for inválida.
-     */
     public void alterarPassword(String novaPassword) throws Exception {
         bll.alterarPassword(novaPassword);
+    }
+
+    // --- Gestão de Ficheiros ---
+
+    public Configuracao getConfiguracao() {
+        return bll.getConfiguracao();
+    }
+
+    public void gravarAlteracoes() {
+        bll.gravarConfiguracao();
     }
 }

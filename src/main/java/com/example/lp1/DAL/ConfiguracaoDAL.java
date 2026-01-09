@@ -3,76 +3,142 @@ package com.example.lp1.DAL;
 import com.example.lp1.Model.Configuracao;
 import java.io.*;
 
-/**
- * Classe responsável pelo acesso aos dados de configuração (DAL).
- * Gere a leitura e escrita da password no ficheiro de texto físico.
- */
 public class ConfiguracaoDAL {
 
-    // Define o caminho dentro de uma pasta para organização
-    private static final String CAMINHO_FICHEIRO = "Ficheiros/password.txt";
+    // CAMINHOS DOS FICHEIROS DE CONFIGURAÇÃO
+    private static final String FICHEIRO_PASSWORD = "Ficheiros/password.txt";
+    private static final String FICHEIRO_CONFIGS  = "Ficheiros/config_geral.txt";
 
     /**
-     * Carrega a configuração do sistema lendo o ficheiro de texto.
-     * Caso o ficheiro não exista, cria um novo ficheiro com uma password predefinida.
-     * A leitura é feita de forma bruta, sem remover espaços em branco.
-     *
-     * @return Um objeto Configuracao contendo a password lida do ficheiro ou a predefinida.
+     * Carrega a configuração completa (Password + Preferências).
      */
     public Configuracao carregarConfiguracao() {
-        File ficheiro = new File(CAMINHO_FICHEIRO);
-        String passwordLida = "admin123!";
+        // 1. Tenta ler a password
+        String passwordLida = lerPasswordDoFicheiro();
 
-        // Se o ficheiro não existe, cria o default e retorna
-        if (!ficheiro.exists()) {
-            Configuracao novaConfig = new Configuracao(passwordLida);
-            gravarConfiguracao(novaConfig);
-            return novaConfig;
-        }
+        // 2. Cria o objeto Configuração com essa password
+        Configuracao config = new Configuracao(passwordLida);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(ficheiro))) {
-            String linha = reader.readLine();
+        // 3. Lê o resto (Pasta base e Separador)
+        lerPreferenciasDoFicheiro(config);
 
-            // Verifica se a linha existe e não está vazia (sem usar trim)
-            if (linha != null && linha.length() > 0) {
-                passwordLida = linha;
-            }
-
-        } catch (IOException e) {
-            System.out.println("Erro ao ler o ficheiro: " + e.getMessage());
-        }
-
-        return new Configuracao(passwordLida);
+        return config;
     }
 
     /**
-     * Grava a password atual no ficheiro de texto.
-     * Cria a diretoria "Ficheiros" caso ela ainda não exista.
-     * Sobrescreve totalmente o conteúdo anterior do ficheiro.
-     *
-     * @param config O objeto Configuracao que contém a password a ser persistida.
+     * Grava a configuração completa.
      */
     public void gravarConfiguracao(Configuracao config) {
-        File ficheiro = new File(CAMINHO_FICHEIRO);
+        gravarPassword(config.getPassword());
+        gravarPreferencias(config);
+    }
 
-        // --- IMPORTANTE: Cria a pasta se ela não existir ---
-        if (ficheiro.getParentFile() != null && !ficheiro.getParentFile().exists()) {
-            ficheiro.getParentFile().mkdirs();
+    // --- MÉTODOS PRIVADOS (LEITURA) ---
+
+    private String lerPasswordDoFicheiro() {
+        File ficheiro = new File(FICHEIRO_PASSWORD);
+
+        // Se o ficheiro não existe, devolve a password padrão
+        if (!ficheiro.exists()) {
+            return "admin123!";
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ficheiro, false))) {
+        try {
+            FileReader fr = new FileReader(ficheiro);
+            BufferedReader reader = new BufferedReader(fr);
 
-            String passwordParaGravar = config.getPassword();
+            String linha = reader.readLine();
 
-            if (passwordParaGravar != null) {
-                writer.write(passwordParaGravar);
+            reader.close();
+            fr.close();
+
+            if (linha != null && linha.length() > 0) {
+                return linha; // Retorna a password lida
             }
 
-            // Opcional: Feedback apenas para debug, pode ser removido se quiseres silêncio total
-            System.out.println("Password guardada com sucesso!");
-
         } catch (IOException e) {
-            System.out.println("Erro ao gravar o ficheiro: " + e.getMessage());
+            System.out.println("Erro ao ler password: " + e.getMessage());
+        }
+
+        return "admin123!"; // Em caso de erro, devolve padrão
+    }
+
+    private void lerPreferenciasDoFicheiro(Configuracao config) {
+        File ficheiro = new File(FICHEIRO_CONFIGS);
+
+        if (!ficheiro.exists()) {
+            // Se não existe, cria o ficheiro com os valores padrão
+            gravarPreferencias(config);
+            return;
+        }
+
+        try {
+            FileReader fr = new FileReader(ficheiro);
+            BufferedReader reader = new BufferedReader(fr);
+
+            String linha;
+            while ((linha = reader.readLine()) != null) {
+                String[] partes = linha.split("=");
+
+                if (partes.length == 2) {
+                    String chave = partes[0];
+                    String valor = partes[1];
+
+                    switch (chave) {
+                        case "DIRETORIO":
+                            config.setDiretorioBase(valor);
+                            break;
+                        case "SEPARADOR":
+                            config.setSeparadorFicheiro(valor);
+                            break;
+                    }
+                }
+            }
+            reader.close();
+            fr.close();
+        } catch (IOException e) {
+            System.out.println("Erro ao ler configurações: " + e.getMessage());
+        }
+    }
+
+    // --- MÉTODOS PRIVADOS (ESCRITA) ---
+
+    private void gravarPassword(String password) {
+        File ficheiro = new File(FICHEIRO_PASSWORD);
+
+        try {
+            FileWriter fw = new FileWriter(ficheiro, false); // false = sobrescrever
+            BufferedWriter writer = new BufferedWriter(fw);
+
+            if (password != null) {
+                writer.write(password);
+            }
+
+            writer.close();
+            fw.close();
+        } catch (IOException e) {
+            System.out.println("Erro ao gravar password: " + e.getMessage());
+        }
+    }
+
+    private void gravarPreferencias(Configuracao config) {
+        File ficheiro = new File(FICHEIRO_CONFIGS);
+
+        try {
+            FileWriter fw = new FileWriter(ficheiro, false);
+            BufferedWriter writer = new BufferedWriter(fw);
+
+            // Grava a pasta base
+            writer.write("DIRETORIO=" + config.getDiretorioBase());
+            writer.newLine();
+
+            // Grava o separador
+            writer.write("SEPARADOR=" + config.getSeparadorFicheiro());
+
+            writer.close();
+            fw.close();
+        } catch (IOException e) {
+            System.out.println("Erro ao gravar configurações: " + e.getMessage());
         }
     }
 }
