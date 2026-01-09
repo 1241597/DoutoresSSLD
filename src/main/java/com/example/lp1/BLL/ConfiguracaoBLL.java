@@ -31,11 +31,13 @@ public class ConfiguracaoBLL {
         dal.gravarConfiguracao(model);
     }
 
-    // --- Getters e Gravação ---
+    // --- Acesso ao Model ---
 
-    public Configuracao getConfiguracao() {
+    public Configuracao getModel() {
         return this.model;
     }
+
+    // --- Gravação ---
 
     public void gravarConfiguracao() {
         dal.gravarConfiguracao(this.model);

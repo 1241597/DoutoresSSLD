@@ -1,2 +1,2 @@
 DIRETORIO=Ficheiros\
-SEPARADOR=;
+SEPARADOR=:

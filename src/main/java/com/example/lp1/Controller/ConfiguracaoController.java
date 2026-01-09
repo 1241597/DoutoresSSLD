@@ -5,7 +5,8 @@ import com.example.lp1.Model.Configuracao;
 
 public class ConfiguracaoController {
 
-    // INICIALIZAÇÃO DIRETA: O Java faz 'new' automaticamente quando crias o Controller
+    // INICIALIZAÇÃO DIRETA: O Java faz 'new' automaticamente quando crias o
+    // Controller
     private ConfiguracaoBLL bll = new ConfiguracaoBLL();
 
     // --- Autenticação ---
@@ -18,11 +19,13 @@ public class ConfiguracaoController {
         bll.alterarPassword(novaPassword);
     }
 
-    // --- Gestão de Ficheiros ---
+    // --- Acesso ao Model (para a View poder ler/alterar) ---
 
     public Configuracao getConfiguracao() {
-        return bll.getConfiguracao();
+        return bll.getModel();
     }
+
+    // --- Gravação ---
 
     public void gravarAlteracoes() {
         bll.gravarConfiguracao();
