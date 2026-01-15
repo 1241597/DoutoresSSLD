@@ -97,4 +97,16 @@ public class Utils {
             }
         }
     }
+
+    public especialidade[] getEspecialidades() {
+        return especialidades;
+    }
+
+    public medico[] getMedicos() {
+        return medicos;
+    }
+
+    public sintoma[] getSintomas() {
+        return sintomas;
+    }
 }

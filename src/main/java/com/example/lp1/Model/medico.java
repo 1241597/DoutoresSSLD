@@ -6,6 +6,9 @@ public class medico {
     private double horaEntrada;
     private double horaSaida;
     private double salarioHora;
+    private double horasTrabalhadasConsecutivas;
+    private double horasDescansoNecessarias;
+    private boolean emDescanso;
 
     public medico(String nome, especialidade especialidade, double horaEntrada, double horaSaida, double salarioHora) {
         this.nome = nome;
@@ -13,6 +16,9 @@ public class medico {
         this.horaEntrada = horaEntrada;
         this.horaSaida = horaSaida;
         this.salarioHora = salarioHora;
+        this.horasTrabalhadasConsecutivas = 0;
+        this.horasDescansoNecessarias = 0;
+        this.emDescanso = false;
     }
 
     public String getNome() {
@@ -53,6 +59,30 @@ public class medico {
 
     public void setSalarioHora(double salarioHora) {
         this.salarioHora = salarioHora;
+    }
+
+    public double getHorasTrabalhadasConsecutivas() {
+        return horasTrabalhadasConsecutivas;
+    }
+
+    public void setHorasTrabalhadasConsecutivas(double horasTrabalhadasConsecutivas) {
+        this.horasTrabalhadasConsecutivas = horasTrabalhadasConsecutivas;
+    }
+
+    public double getHorasDescansoNecessarias() {
+        return horasDescansoNecessarias;
+    }
+
+    public void setHorasDescansoNecessarias(double horasDescansoNecessarias) {
+        this.horasDescansoNecessarias = horasDescansoNecessarias;
+    }
+
+    public boolean isEmDescanso() {
+        return emDescanso;
+    }
+
+    public void setEmDescanso(boolean emDescanso) {
+        this.emDescanso = emDescanso;
     }
 
     @Override
