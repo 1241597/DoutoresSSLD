@@ -2,6 +2,7 @@ package com.example.lp1;
 
 import com.example.lp1.Utils.Utils;
 import com.example.lp1.View.ConfiguracaoView;
+import com.example.lp1.View.GestaoView;
 import java.util.Scanner;
 
 public class Main {
@@ -47,8 +48,8 @@ public class Main {
             switch (opcao) {
                 case 1:
                     System.out.println(">> A abrir gestão de Médicos...");
-                    // MedicosView medicosView = new MedicosView();
-                    // medicosView.iniciar();
+                    GestaoView gestao = new GestaoView();
+                    gestao.iniciar();
                     break;
 
                 case 2:
