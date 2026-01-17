@@ -6,6 +6,10 @@ public class Medico {
     private double horaEntrada;
     private double horaSaida;
     private double salarioHora;
+    private boolean disponivel;
+    private Utente utenteAtual;
+    private int horaInicioAtendimento;
+    private int horaFimPrevista; // Hora prevista para terminar o atendimento
 
     public Medico(String nome, Especialidade especialidade, double horaEntrada, double horaSaida, double salarioHora) {
         this.nome = nome;
@@ -13,6 +17,8 @@ public class Medico {
         this.horaEntrada = horaEntrada;
         this.horaSaida = horaSaida;
         this.salarioHora = salarioHora;
+        this.disponivel = false;
+        this.utenteAtual = null;
     }
 
     public String getNome() {
@@ -55,14 +61,71 @@ public class Medico {
         this.salarioHora = salarioHora;
     }
 
+    public boolean isDisponivel() {
+        return disponivel;
+    }
+
+    public void setDisponivel(boolean disponivel) {
+        this.disponivel = disponivel;
+    }
+
+    public Utente getUtenteAtual() {
+        return utenteAtual;
+    }
+
+    public void setUtenteAtual(Utente utenteAtual) {
+        this.utenteAtual = utenteAtual;
+    }
+
+    public int getHoraInicioAtendimento() {
+        return horaInicioAtendimento;
+    }
+
+    public void setHoraInicioAtendimento(int horaInicioAtendimento) {
+        this.horaInicioAtendimento = horaInicioAtendimento;
+    }
+
+    /**
+     * Verifica se o médico deve estar disponível na hora especificada
+     * baseado no seu horário de trabalho
+     */
+    public boolean isDisponivelNaHora(int hora) {
+        return hora >= horaEntrada && hora <= horaSaida;
+    }
+
+    /**
+     * Inicia atendimento de um utente
+     */
+    public void iniciarAtendimento(Utente utente, int horaAtual, int duracao) {
+        this.utenteAtual = utente;
+        this.disponivel = false;
+        this.horaInicioAtendimento = horaAtual;
+        this.horaFimPrevista = horaAtual + duracao;
+    }
+
+    /**
+     * Finaliza o atendimento atual
+     */
+    public void finalizarAtendimento() {
+        this.utenteAtual = null;
+        this.disponivel = true;
+        this.horaInicioAtendimento = 0;
+        this.horaFimPrevista = 0;
+    }
+
+    public int getHoraFimPrevista() {
+        return horaFimPrevista;
+    }
+
     @Override
     public String toString() {
-        return "medico{" +
+        return "Médico{" +
                 "nome='" + nome + '\'' +
-                ", especialidade=" + especialidade +
+                ", especialidade=" + especialidade.getCodigo() +
                 ", horaEntrada=" + horaEntrada +
                 ", horaSaida=" + horaSaida +
-                ", salarioHora=" + salarioHora +
+                ", disponível=" + disponivel +
+                ", atendendo=" + (utenteAtual != null ? utenteAtual.getNome() : "ninguém") +
                 '}';
     }
 }

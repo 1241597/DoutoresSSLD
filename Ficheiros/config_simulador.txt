@@ -1,0 +1,15 @@
+# Configuração do Simulador de Urgência
+# Formato: PARAMETRO=VALOR
+
+# Duração do atendimento por nível de urgência (em unidades de tempo)
+# VERDE (Baixa urgência)
+DURACAO_VERDE=2
+
+# LARANJA (Média urgência)
+DURACAO_LARANJA=3
+
+# VERMELHA (Urgente)
+DURACAO_VERMELHA=4
+
+# Nota: Se um utente tiver sintomas mistos (ex: VERDE + VERMELHA),
+# será usada a duração da pior urgência (neste caso, VERMELHA = 4 unidades)
