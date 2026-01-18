@@ -1,7 +1,5 @@
 package com.example.lp1.Utils;
 
-import org.hibernate.grammars.hql.HqlParser;
-
 public class Enums {
     public enum nivelUrgencia {
         VERDE(1), LARANJA(2), VERMELHA(3);
