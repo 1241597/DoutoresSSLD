@@ -87,6 +87,12 @@ public class NotificacaoBLL {
         if (utentes != null) {
             for (Utente u : utentes) {
                 if (u != null && u.getHoraChegada() > 0) {
+                    // Ignorar utentes que já estão sendo atendidos ou concluídos
+                    if (u.getStatus() == com.example.lp1.Utils.Enums.StatusUtente.COM_MEDICO ||
+                            u.getStatus() == com.example.lp1.Utils.Enums.StatusUtente.CONCLUIDO) {
+                        continue;
+                    }
+
                     int tempoEspera = horaAtual - u.getHoraChegada();
 
                     // Alertar se urgente e esperando há mais de 2 horas

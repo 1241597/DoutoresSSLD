@@ -56,6 +56,18 @@ public class SimuladorView {
         this.sintomas = utils.getSintomas();
         this.especialidades = utils.getEspecialidades();
 
+        // Aplicar intervalos de descanso da configuração aos médicos
+        if (medicos != null) {
+            for (Medico m : medicos) {
+                if (m != null) {
+                    int[][] intervalos = configuracaoBLL.getIntervalosMedico(m.getNome());
+                    if (intervalos != null) {
+                        m.setIntervalosDescanso(intervalos);
+                    }
+                }
+            }
+        }
+
         System.out.println("[SIMULADOR] Dados carregados: " +
                 medicos.length + " médicos, " +
                 sintomas.length + " sintomas, " +
@@ -166,8 +178,15 @@ public class SimuladorView {
         // Listar utentes aguardando triagem
         Utente[] aguardandoTriagem = new Utente[numUtentes];
         int countTriagem = 0;
+        int horaAtual = simulador.getHoraAtual();
+
         for (int i = 0; i < numUtentes; i++) {
-            if (utentes[i].getStatus() == StatusUtente.AGUARDANDO_TRIAGEM) {
+            // Só pode ser chamado para triagem se:
+            // 1. Está aguardando triagem
+            // 2. Não foi registado na hora atual (tem que esperar pelo menos 1 unidade de
+            // tempo)
+            if (utentes[i].getStatus() == StatusUtente.AGUARDANDO_TRIAGEM &&
+                    utentes[i].getHoraChegada() < horaAtual) {
                 aguardandoTriagem[countTriagem++] = utentes[i];
             }
         }
@@ -265,6 +284,7 @@ public class SimuladorView {
 
         utente.setHoraTriagem(simulador.getHoraAtual());
         utente.setStatus(StatusUtente.AGUARDANDO_MEDICO);
+        utente.setHoraUltimaEscalacao(simulador.getHoraAtual()); // Inicializar controle de escalação
 
         // Mostrar resultados
         System.out.println("\n✅ TRIAGEM CONCLUÍDA");
@@ -558,6 +578,9 @@ public class SimuladorView {
             System.out.println("🌅 Novo dia iniciado!");
         }
 
+        // VERIFICAR ESCALAÇÃO DE URGÊNCIA
+        verificarEscalacaoUrgencia(horaAtual);
+
         // VERIFICAR E FINALIZAR ATENDIMENTOS AUTOMATICAMENTE
         String[] finalizados = atribuicaoBLL.verificarEFinalizarAtendimentos(medicos, horaAtual);
         if (finalizados.length > 0) {
@@ -631,14 +654,29 @@ public class SimuladorView {
             return;
         }
 
-        System.out.printf("%-20s %-12s %-10s %-12s %s\n",
+        System.out.printf("%-20s %-12s %-30s %-12s %s\n",
                 "Nome", "Especialidade", "Turno", "Disponível", "Atendendo");
-        System.out.println("─".repeat(80));
+        System.out.println("─".repeat(100));
 
         for (Medico m : medicos) {
             if (m != null) {
                 String turno = String.format("%.0f-%.0fh",
                         m.getHoraEntrada(), m.getHoraSaida());
+
+                // Adicionar intervalos de descanso ao turno
+                if (m.getIntervalosDescanso() != null && m.getIntervalosDescanso().length > 0) {
+                    turno += " (Desc: ";
+                    for (int i = 0; i < m.getIntervalosDescanso().length; i++) {
+                        int[] intervalo = m.getIntervalosDescanso()[i];
+                        if (intervalo != null && intervalo.length == 2) {
+                            turno += intervalo[0] + "-" + intervalo[1] + "h";
+                            if (i < m.getIntervalosDescanso().length - 1)
+                                turno += ", ";
+                        }
+                    }
+                    turno += ")";
+                }
+
                 String disponivel = m.isDisponivel() ? "✅ Sim" : "❌ Não";
                 String atendendo = m.getUtenteAtual() != null ? m.getUtenteAtual().getNome() : "-";
 
@@ -648,7 +686,7 @@ public class SimuladorView {
                     atendendo += " ⚠️";
                 }
 
-                System.out.printf("%-20s %-12s %-10s %-12s %s\n",
+                System.out.printf("%-20s %-12s %-30s %-12s %s\n",
                         m.getNome(),
                         m.getEspecialidade().getCodigo(),
                         turno,
@@ -677,5 +715,62 @@ public class SimuladorView {
         }
 
         System.out.println("\n✅ Notificações limpas.");
+    }
+
+    /**
+     * Verifica e escala a urgência dos utentes que estão aguardando há muito tempo
+     */
+    private void verificarEscalacaoUrgencia(int horaAtual) {
+        for (int i = 0; i < numUtentes; i++) {
+            Utente u = utentes[i];
+
+            // Só escalar utentes aguardando médico
+            if (u.getStatus() != StatusUtente.AGUARDANDO_MEDICO) {
+                continue;
+            }
+
+            // Se não tem urgência calculada, ignorar
+            if (u.getNivelUrgenciaCalculado() == null) {
+                continue;
+            }
+
+            // Calcular tempo desde última escalação
+            int tempoEspera = horaAtual - u.getHoraUltimaEscalacao();
+            nivelUrgencia urgenciaAtual = u.getNivelUrgenciaCalculado();
+            nivelUrgencia novaUrgencia = null;
+
+            // Verificar se deve escalar
+            switch (urgenciaAtual) {
+                case VERDE:
+                    if (tempoEspera >= configuracaoBLL.getTempoVerdePararanja()) {
+                        novaUrgencia = nivelUrgencia.LARANJA;
+                    }
+                    break;
+
+                case LARANJA:
+                    if (tempoEspera >= configuracaoBLL.getTempoLaranjaParaVermelha()) {
+                        novaUrgencia = nivelUrgencia.VERMELHA;
+                    }
+                    break;
+
+                case VERMELHA:
+                    // Já está no nível máximo, não escala mais
+                    break;
+            }
+
+            // Se deve escalar, aplicar mudança
+            if (novaUrgencia != null) {
+                u.setNivelUrgenciaCalculado(novaUrgencia);
+                u.setHoraUltimaEscalacao(horaAtual);
+
+                // Gerar notificação
+                String mensagem = String.format(
+                        "⚠️ ESCALAÇÃO: Utente %s teve urgência escalada de %s para %s (aguardando %d unidades)",
+                        u.getNome(), urgenciaAtual, novaUrgencia, tempoEspera);
+                notificacaoBLL.adicionarNotificacao(mensagem);
+
+                System.out.println("\n" + mensagem);
+            }
+        }
     }
 }

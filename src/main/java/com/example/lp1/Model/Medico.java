@@ -10,6 +10,7 @@ public class Medico {
     private Utente utenteAtual;
     private int horaInicioAtendimento;
     private int horaFimPrevista; // Hora prevista para terminar o atendimento
+    private int[][] intervalosDescanso; // Intervalos de descanso [inicio, fim]
 
     public Medico(String nome, Especialidade especialidade, double horaEntrada, double horaSaida, double salarioHora) {
         this.nome = nome;
@@ -87,10 +88,28 @@ public class Medico {
 
     /**
      * Verifica se o médico deve estar disponível na hora especificada
-     * baseado no seu horário de trabalho
+     * baseado no seu horário de trabalho e intervalos de descanso
      */
     public boolean isDisponivelNaHora(int hora) {
-        return hora >= horaEntrada && hora <= horaSaida;
+        // Verifica se está dentro do horário de trabalho
+        if (hora < horaEntrada || hora > horaSaida) {
+            return false;
+        }
+
+        // Verifica se está em intervalo de descanso
+        if (intervalosDescanso != null) {
+            for (int[] intervalo : intervalosDescanso) {
+                if (intervalo != null && intervalo.length == 2) {
+                    int inicio = intervalo[0];
+                    int fim = intervalo[1];
+                    if (hora >= inicio && hora < fim) {
+                        return false; // Está em intervalo de descanso
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -115,6 +134,14 @@ public class Medico {
 
     public int getHoraFimPrevista() {
         return horaFimPrevista;
+    }
+
+    public int[][] getIntervalosDescanso() {
+        return intervalosDescanso;
+    }
+
+    public void setIntervalosDescanso(int[][] intervalosDescanso) {
+        this.intervalosDescanso = intervalosDescanso;
     }
 
     @Override

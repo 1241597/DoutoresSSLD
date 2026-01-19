@@ -10,6 +10,7 @@ public class Utente {
     private Especialidade especialidadeCalculada;
     private int horaChegada;
     private int horaTriagem;
+    private int horaUltimaEscalacao; // Hora em que a urgência foi verificada pela última vez
     private StatusUtente status;
 
     // Construtor original mantido para compatibilidade
@@ -81,6 +82,14 @@ public class Utente {
 
     public void setStatus(StatusUtente status) {
         this.status = status;
+    }
+
+    public int getHoraUltimaEscalacao() {
+        return horaUltimaEscalacao;
+    }
+
+    public void setHoraUltimaEscalacao(int horaUltimaEscalacao) {
+        this.horaUltimaEscalacao = horaUltimaEscalacao;
     }
 
     @Override
