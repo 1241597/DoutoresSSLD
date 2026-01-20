@@ -4,16 +4,22 @@ import com.example.lp1.DAL.MedicoDAL;
 import com.example.lp1.DAL.EspecialidadeDAL;
 import com.example.lp1.Model.Medico;
 import com.example.lp1.Model.Especialidade;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Interface de consola para gestão de Médicos.
+ * Permite listar, criar, atualizar, eliminar e gravar médicos.
+ * Valida horas de entrada/saída (0..23).
+ */
 public class MedicosView {
 
     private MedicoDAL medicoDAL = new MedicoDAL();
     private EspecialidadeDAL espDAL = new EspecialidadeDAL();
     private Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Inicia menu de médicos.
+     */
     public void iniciar() {
         Medico[] medicos = medicoDAL.carregarMedicos();
         Especialidade[] especialidades = espDAL.carregarEspecialidades();
@@ -72,11 +78,23 @@ public class MedicosView {
         } while (opcao != 0);
     }
 
+    /**
+     * Mostra a lista de médicos.
+     *
+     * @param medicos array de Medico
+     */
     private void listarMedicos(Medico[] medicos) {
         if (medicos.length == 0) { System.out.println("Sem médicos registados."); return; }
         for (int i = 0; i < medicos.length; i++) System.out.println(i + ". " + medicos[i].toString());
     }
 
+    /**
+     * Cria novo médico com validação de horas (0..23).
+     *
+     * @param medicos array atual de Medico
+     * @param especialidades array de Especialidade disponível
+     * @return array com o novo médico adicionado
+     */
     private Medico[] criarMedico(Medico[] medicos, Especialidade[] especialidades) {
         System.out.print("Nome: "); String nome = scanner.nextLine();
         if (especialidades.length == 0) { System.out.println("Não existem especialidades. Crie uma antes."); return medicos; }
@@ -91,13 +109,19 @@ public class MedicosView {
 
         System.out.print("Salário por hora: "); double salario = lerDoubleComDefault(10.0);
         Medico novo = new Medico(nome, especialidades[idxEsp], hEnt, hSai, salario);
-        medicos = appendToArray(medicos, novo);
+        medicos = appendMedico(medicos, novo);
         System.out.println("Médico criado.");
         return medicos;
     }
 
+    /**
+     * Atualiza médico existente (enter para manter).
+     *
+     * @param medicos array de Medico
+     * @param especialidades array de Especialidade
+     * @return array atualizado
+     */
     private Medico[] atualizarMedico(Medico[] medicos, Especialidade[] especialidades) {
-        // ...existing code up to leitura de nome/especialidade...
         listarMedicos(medicos);
         if (medicos.length == 0) return medicos;
 
@@ -145,28 +169,38 @@ public class MedicosView {
         return medicos;
     }
 
+    /**
+     * Elimina médico por índice.
+     *
+     * @param medicos array de Medico
+     * @return array sem o médico eliminado
+     */
     private Medico[] eliminarMedico(Medico[] medicos) {
         listarMedicos(medicos);
         if (medicos.length == 0) return medicos;
         System.out.print("Índice a eliminar: "); int idx = lerIntComDefault(-1);
         if (idx < 0 || idx >= medicos.length) { System.out.println("Índice inválido."); return medicos; }
-        List<Medico> l = new ArrayList<>();
-        for (int i = 0; i < medicos.length; i++) if (i != idx) l.add(medicos[i]);
+        Medico[] r = new Medico[medicos.length - 1];
+        int j = 0;
+        for (int i = 0; i < medicos.length; i++) if (i != idx) r[j++] = medicos[i];
         System.out.println("Eliminado.");
-        return l.toArray(new Medico[l.size()]);
+        return r;
     }
 
-    private Medico[] appendToArray(Medico[] arr, Medico item) {
-        List<Medico> l = new ArrayList<>();
-        for (Medico m : arr) l.add(m);
-        l.add(item);
-        return l.toArray(new Medico[l.size()]);
+    private Medico[] appendMedico(Medico[] arr, Medico item) {
+        Medico[] r = new Medico[arr.length + 1];
+        System.arraycopy(arr, 0, r, 0, arr.length);
+        r[arr.length] = item;
+        return r;
     }
 
     private Medico[] trimArray(Medico[] arr) {
-        List<Medico> l = new ArrayList<>();
-        for (Medico m : arr) if (m != null) l.add(m);
-        return l.toArray(new Medico[l.size()]);
+        int count = 0;
+        for (Medico m : arr) if (m != null) count++;
+        Medico[] r = new Medico[count];
+        int j = 0;
+        for (Medico m : arr) if (m != null) r[j++] = m;
+        return r;
     }
 
     private int lerIntComDefault(int def) {
@@ -178,6 +212,14 @@ public class MedicosView {
     }
 
     // --- Novos helpers para validar horas ---
+    /**
+     * Lê hora obrigatória entre um intervalo, com prompt.
+     *
+     * @param min valor mínimo (inclusive)
+     * @param max valor máximo (inclusive)
+     * @param prompt mensagem a mostrar ao usuário
+     * @return valor da hora lida
+     */
     private double lerHoraObrigatoriaEntre(double min, double max, String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -192,6 +234,13 @@ public class MedicosView {
         }
     }
 
+    /**
+     * Lê hora com opção de manter valor atual (pressionar Enter).
+     *
+     * @param atual valor atual da hora
+     * @param prompt mensagem a mostrar ao usuário
+     * @return novo valor da hora
+     */
     private double lerHoraComEnterParaManter(double atual, String prompt) {
         while (true) {
             System.out.print(prompt);

@@ -2,8 +2,15 @@ package com.example.lp1.View;
 
 import java.util.Scanner;
 
+/**
+ * View de gestão principal que apresenta o menu para:
+ * 1 - Médicos, 2 - Utentes, 3 - Especialidades, 4 - Sintomas.
+ */
 public class GestaoView {
 
+    /**
+     * Inicia o menu de gestão e encaminha para as views específicas.
+     */
     public void iniciar() {
         Scanner scanner = new Scanner(System.in);
         int opcao = -1;
@@ -46,4 +53,3 @@ public class GestaoView {
         } while (opcao != 0);
     }
 }
-
