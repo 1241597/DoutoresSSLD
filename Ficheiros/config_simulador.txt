@@ -1,0 +1,31 @@
+# Configuração do Simulador de Urgência
+# Formato: PARAMETRO=VALOR
+
+# Duração do atendimento por nível de urgência (em unidades de tempo)
+# VERDE (Baixa urgência)
+DURACAO_VERDE=2
+
+# LARANJA (Média urgência)
+DURACAO_LARANJA=3
+
+# VERMELHA (Urgente)
+DURACAO_VERMELHA=4
+
+# Nota: Se um utente tiver sintomas mistos (ex: VERDE + VERMELHA),
+# será usada a duração da pior urgência (neste caso, VERMELHA = 4 unidades)
+
+# Tempos de escalação de urgência (em unidades de tempo)
+# Tempo para urgência VERDE passar a LARANJA quando aguardando médico
+TEMPO_VERDE_PARA_LARANJA=5
+
+# Tempo para urgência LARANJA passar a VERMELHA quando aguardando médico
+TEMPO_LARANJA_PARA_VERMELHA=3
+
+# Intervalos de descanso por médico
+# Formato: INTERVALO_NomeMedico=hora-hora,hora-hora
+# Espaços no nome devem ser substituídos por _
+INTERVALO_Joao_Martins=12-13
+INTERVALO_Maria_Silva=13-14,17-18
+INTERVALO_Pedro_Gomes=14-15
+# António Ferreira não tem intervalos (não incluir linha)
+

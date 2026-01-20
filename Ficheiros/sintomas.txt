@@ -1,4 +1,4 @@
-Dor no peito;Vermelha;CARD
+    Dor no peito;Vermelha;CARD
 Palpitações;Laranja;CARD
 Coração acelerado;Laranja;CARD
 Falta de ar ao esforço;Laranja;CARD

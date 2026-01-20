@@ -47,7 +47,8 @@ public class Utils {
 
     private void associarMedicosAEspecialidades() {
         // Se não houver especialidades carregadas, não vale a pena continuar
-        if (this.especialidades == null || this.especialidades.length == 0) return;
+        if (this.especialidades == null || this.especialidades.length == 0)
+            return;
 
         for (int i = 0; i < this.medicos.length; i++) {
             Medico m = this.medicos[i];
@@ -70,7 +71,8 @@ public class Utils {
     }
 
     private void associarSintomasAEspecialidades() {
-        if (this.especialidades == null || this.especialidades.length == 0) return;
+        if (this.especialidades == null || this.especialidades.length == 0)
+            return;
 
         for (int i = 0; i < this.sintomas.length; i++) {
             Sintoma s = this.sintomas[i];
@@ -106,5 +108,19 @@ public class Utils {
      */
     public static void mostrarMensagem(String mensagem) {
         System.out.println(mensagem);
+    }
+
+    // --- GETTERS PARA ACESSO AOS DADOS ---
+
+    public Especialidade[] getEspecialidades() {
+        return especialidades;
+    }
+
+    public Medico[] getMedicos() {
+        return medicos;
+    }
+
+    public Sintoma[] getSintomas() {
+        return sintomas;
     }
 }

@@ -3,6 +3,7 @@ package com.example.lp1;
 import com.example.lp1.Utils.Utils;
 import com.example.lp1.View.ConfiguracaoView;
 import com.example.lp1.View.GestaoView;
+import com.example.lp1.View.SimuladorView;
 import java.util.Scanner;
 
 public class Main {
@@ -54,8 +55,8 @@ public class Main {
 
                 case 2:
                     System.out.println(">> A abrir gestão do funcionamento...");
-                    // SimulacaoView simView = new SimulacaoView();
-                    // simView.iniciar();
+                    SimuladorView simView = new SimuladorView();
+                    simView.iniciar();
                     break;
 
                 case 3:
