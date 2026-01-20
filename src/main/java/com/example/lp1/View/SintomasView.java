@@ -5,16 +5,21 @@ import com.example.lp1.DAL.EspecialidadeDAL;
 import com.example.lp1.Model.Sintoma;
 import com.example.lp1.Model.Especialidade;
 import com.example.lp1.Utils.Enums.nivelUrgencia;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Interface de consola para gestão de sintomas.
+ * Operações: listar, criar, atualizar, eliminar e gravar.
+ */
 public class SintomasView {
 
     private SintomaDAL dal = new SintomaDAL();
     private EspecialidadeDAL espDAL = new EspecialidadeDAL();
     private Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Inicia menu de sintomas.
+     */
     public void iniciar() {
         Sintoma[] sintomas = dal.carregarSintomas();
         Especialidade[] esps = espDAL.carregarEspecialidades();
@@ -47,11 +52,23 @@ public class SintomasView {
         } while (opcao != 0);
     }
 
+    /**
+     * Lista sintomas.
+     *
+     * @param s array de Sintoma
+     */
     private void listar(Sintoma[] s) {
         if (s.length == 0) { System.out.println("Sem sintomas."); return; }
         for (int i = 0; i < s.length; i++) System.out.println(i + ". " + s[i].toString());
     }
 
+    /**
+     * Cria novo sintoma.
+     *
+     * @param sintomas array atual de Sintoma
+     * @param esps array de Especialidade disponível
+     * @return array com o novo sintoma
+     */
     private Sintoma[] criar(Sintoma[] sintomas, Especialidade[] esps) {
         System.out.print("Nome do sintoma: "); String nome = scanner.nextLine();
         System.out.println("Nível de urgência:");
@@ -68,21 +85,26 @@ public class SintomasView {
             escolha = new Especialidade[0];
         } else {
             String[] parts = line.split(",");
-            List<Especialidade> sel = new ArrayList<>();
+            Especialidade[] sel = new Especialidade[0];
             for (String p : parts) {
-                try { int idx = Integer.parseInt(p.trim()); if (idx >= 0 && idx < esps.length) sel.add(esps[idx]); } catch (Exception ignored) {}
+                try { int idx = Integer.parseInt(p.trim()); if (idx >= 0 && idx < esps.length) sel = appendEspecialidade(sel, esps[idx]); } catch (Exception ignored) {}
             }
-            escolha = sel.toArray(new Especialidade[sel.size()]);
+            escolha = sel;
         }
 
         Sintoma novo = new Sintoma(nome, urg, escolha);
-        List<Sintoma> l = new ArrayList<>();
-        for (Sintoma si : sintomas) l.add(si);
-        l.add(novo);
+        sintomas = appendSintoma(sintomas, novo);
         System.out.println("Criado.");
-        return l.toArray(new Sintoma[l.size()]);
+        return sintomas;
     }
 
+    /**
+     * Atualiza sintoma existente.
+     *
+     * @param sintomas array de Sintoma
+     * @param esps array de Especialidade
+     * @return array atualizado
+     */
     private Sintoma[] atualizar(Sintoma[] sintomas, Especialidade[] esps) {
         listar(sintomas);
         if (sintomas.length == 0) return sintomas;
@@ -103,36 +125,60 @@ public class SintomasView {
         String line = scanner.nextLine();
         if (!line.isEmpty()) {
             String[] parts = line.split(",");
-            List<Especialidade> sel = new ArrayList<>();
+            Especialidade[] sel = new Especialidade[0];
             for (String p : parts) {
-                try { int id = Integer.parseInt(p.trim()); if (id >= 0 && id < esps.length) sel.add(esps[id]); } catch (Exception ignored) {}
+                try { int id = Integer.parseInt(p.trim()); if (id >= 0 && id < esps.length) sel = appendEspecialidade(sel, esps[id]); } catch (Exception ignored) {}
             }
-            s.setEspecialidades(sel.toArray(new Especialidade[sel.size()]));
+            s.setEspecialidades(sel);
         }
         sintomas[idx] = s;
         System.out.println("Atualizado.");
         return sintomas;
     }
 
+    /**
+     * Elimina sintoma por índice.
+     *
+     * @param sintomas array de Sintoma
+     * @return array após remoção
+     */
     private Sintoma[] eliminar(Sintoma[] sintomas) {
         listar(sintomas);
         if (sintomas.length == 0) return sintomas;
         System.out.print("Índice a eliminar: "); int idx = lerIntComDefault(-1);
         if (idx < 0 || idx >= sintomas.length) return sintomas;
-        List<Sintoma> l = new ArrayList<>();
-        for (int i = 0; i < sintomas.length; i++) if (i != idx) l.add(sintomas[i]);
+        Sintoma[] r = new Sintoma[sintomas.length - 1];
+        int j = 0;
+        for (int i = 0; i < sintomas.length; i++) if (i != idx) r[j++] = sintomas[i];
         System.out.println("Eliminado.");
-        return l.toArray(new Sintoma[l.size()]);
+        return r;
     }
 
     private Sintoma[] trimArray(Sintoma[] arr) {
-        List<Sintoma> l = new ArrayList<>();
-        for (Sintoma s : arr) if (s != null) l.add(s);
-        return l.toArray(new Sintoma[l.size()]);
+        int count = 0;
+        for (Sintoma s : arr) if (s != null) count++;
+        Sintoma[] r = new Sintoma[count];
+        int j = 0;
+        for (Sintoma s : arr) if (s != null) r[j++] = s;
+        return r;
+    }
+
+    // Helpers
+    private Especialidade[] appendEspecialidade(Especialidade[] arr, Especialidade item) {
+        Especialidade[] r = new Especialidade[arr.length + 1];
+        System.arraycopy(arr, 0, r, 0, arr.length);
+        r[arr.length] = item;
+        return r;
+    }
+
+    private Sintoma[] appendSintoma(Sintoma[] arr, Sintoma item) {
+        Sintoma[] r = new Sintoma[arr.length + 1];
+        System.arraycopy(arr, 0, r, 0, arr.length);
+        r[arr.length] = item;
+        return r;
     }
 
     private int lerIntComDefault(int def) {
         try { String s = scanner.nextLine(); return s.isEmpty() ? def : Integer.parseInt(s); } catch (Exception e) { return def; }
     }
 }
-

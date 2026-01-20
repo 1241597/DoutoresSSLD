@@ -2,15 +2,21 @@ package com.example.lp1.View;
 
 import com.example.lp1.DAL.EspecialidadeDAL;
 import com.example.lp1.Model.Especialidade;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Interface de consola para gestão de especialidades.
+ * Permite listar, criar, atualizar, eliminar e gravar especialidades.
+ * Utiliza arrays em memória e grava via EspecialidadeDAL.
+ */
 public class EspecialidadesView {
 
     private EspecialidadeDAL dal = new EspecialidadeDAL();
     private Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Inicia o menu de gestão de especialidades.
+     */
     public void iniciar() {
         Especialidade[] esps = dal.carregarEspecialidades();
         int opcao = -1;
@@ -42,22 +48,35 @@ public class EspecialidadesView {
         } while (opcao != 0);
     }
 
+    /**
+     * Lista especialidades no ecrã.
+     *
+     * @param esps array de Especialidade
+     */
     private void listar(Especialidade[] esps) {
         if (esps.length == 0) { System.out.println("Sem especialidades."); return; }
         for (int i = 0; i < esps.length; i++) System.out.println(i + ". " + esps[i].getCodigo() + " - " + esps[i].getNome());
     }
 
+    /**
+     * Cria uma nova especialidade a partir da entrada do utilizador.
+     *
+     * @param esps array atual de Especialidade
+     * @return novo array com a especialidade adicionada
+     */
     private Especialidade[] criar(Especialidade[] esps) {
         System.out.print("Código: "); String codigo = scanner.nextLine();
         System.out.print("Nome: "); String nome = scanner.nextLine();
         Especialidade e = new Especialidade(codigo, nome);
-        List<Especialidade> l = new ArrayList<>();
-        for (Especialidade ex : esps) l.add(ex);
-        l.add(e);
-        System.out.println("Criado.");
-        return l.toArray(new Especialidade[l.size()]);
+        return appendEspecialidade(esps, e);
     }
 
+    /**
+     * Atualiza uma especialidade existente.
+     *
+     * @param esps array de Especialidade
+     * @return array atualizado
+     */
     private Especialidade[] atualizar(Especialidade[] esps) {
         listar(esps);
         if (esps.length == 0) return esps;
@@ -72,21 +91,46 @@ public class EspecialidadesView {
         return esps;
     }
 
+    /**
+     * Elimina uma especialidade por índice.
+     *
+     * @param esps array de Especialidade
+     * @return array após remoção
+     */
     private Especialidade[] eliminar(Especialidade[] esps) {
         listar(esps);
         if (esps.length == 0) return esps;
         System.out.print("Índice a eliminar: ");
         int idx; try { idx = Integer.parseInt(scanner.nextLine()); } catch (Exception e) { System.out.println("Índice inválido."); return esps; }
-        List<Especialidade> l = new ArrayList<>();
-        for (int i = 0; i < esps.length; i++) if (i != idx) l.add(esps[i]);
-        System.out.println("Eliminado.");
-        return l.toArray(new Especialidade[l.size()]);
+        return removeEspecialidadeAt(esps, idx);
     }
 
     private Especialidade[] trimArray(Especialidade[] arr) {
-        List<Especialidade> l = new ArrayList<>();
-        for (Especialidade e : arr) if (e != null) l.add(e);
-        return l.toArray(new Especialidade[l.size()]);
+        int count = 0;
+        for (Especialidade e : arr) if (e != null) count++;
+        Especialidade[] r = new Especialidade[count];
+        int j = 0;
+        for (Especialidade e : arr) if (e != null) r[j++] = e;
+        return r;
+    }
+
+    // Helpers
+    private Especialidade[] appendEspecialidade(Especialidade[] arr, Especialidade item) {
+        Especialidade[] r = new Especialidade[arr.length + 1];
+        System.arraycopy(arr, 0, r, 0, arr.length);
+        r[arr.length] = item;
+        return r;
+    }
+
+    private Especialidade[] removeEspecialidadeAt(Especialidade[] arr, int idx) {
+        if (idx < 0 || idx >= arr.length) return arr;
+        Especialidade[] r = new Especialidade[arr.length - 1];
+        int j = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (i == idx) continue;
+            r[j++] = arr[i];
+        }
+        System.out.println("Eliminado.");
+        return r;
     }
 }
-
