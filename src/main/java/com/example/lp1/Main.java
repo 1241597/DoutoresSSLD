@@ -2,6 +2,8 @@ package com.example.lp1;
 
 import com.example.lp1.Utils.Utils;
 import com.example.lp1.View.ConfiguracaoView;
+import com.example.lp1.View.EstatisticasView;
+import com.example.lp1.Model.Estatisticas;
 import java.util.Scanner;
 
 public class Main {
@@ -17,6 +19,9 @@ public class Main {
         utils.carregarFicheiros();
 
         System.out.println("[SISTEMA] Carregamento concluído.\n");
+
+        // Criar o objecto de Estatisticas que será passado para a view
+        Estatisticas estatisticas = new Estatisticas();
 
         // =========================================================
         // 2. MENU PRINCIPAL
@@ -59,8 +64,8 @@ public class Main {
 
                 case 3:
                     System.out.println(">> A abrir Estatísticas...");
-                    // EstatisticasView estatView = new EstatisticasView();
-                    // estatView.iniciar();
+                    EstatisticasView estatView = new EstatisticasView(estatisticas);
+                    estatView.iniciar();
                     break;
 
                 case 4:
