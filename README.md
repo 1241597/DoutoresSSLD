@@ -12,6 +12,7 @@ src/
 │   │   ├── Controller/     # Controladores REST
 │   │   ├── DAL/            # Data Access Layer (Repositórios)
 │   │   ├── Model/          # Entidades e modelos de dados
+│   │   ├── View/           # Visual do projeto
 │   │   ├── Utils/          # Classes utilitárias
 │   │   └── Main.java       # Classe principal
 │   └── resources/

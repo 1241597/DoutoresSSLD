@@ -25,4 +25,22 @@ public class Enums {
             throw new IllegalArgumentException("Código inválido: " + nivelUrgencia);
         }
     }
+
+    public enum StatusUtente {
+        AGUARDANDO_TRIAGEM("Aguardando Triagem"),
+        EM_TRIAGEM("Em Triagem"),
+        AGUARDANDO_MEDICO("Aguardando Médico"),
+        COM_MEDICO("Com Médico"),
+        CONCLUIDO("Concluído");
+
+        private final String descricao;
+
+        StatusUtente(String descricao) {
+            this.descricao = descricao;
+        }
+
+        public String getDescricao() {
+            return descricao;
+        }
+    }
 }
