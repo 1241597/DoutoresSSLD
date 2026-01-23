@@ -5,6 +5,10 @@ public class Estatisticas {
     private int totalDias;
     private int totalUtentesAtendidos;
 
+    private String[] medicos;
+    private double[] salariosDia;
+    private int totalMedicos;
+
     private String[] sintomas;
     private int[] contagemSintomas;
     private int totalSintomas;
@@ -16,6 +20,10 @@ public class Estatisticas {
     public Estatisticas() {
         totalDias = 0;
         totalUtentesAtendidos = 0;
+
+        medicos = new String[50];
+        salariosDia = new double[50];
+        totalMedicos = 0;
 
         sintomas = new String[100];
         contagemSintomas = new int[100];
@@ -29,6 +37,11 @@ public class Estatisticas {
     // getters e setters
     public int getTotalDias() { return totalDias; }
     public void incDias() { totalDias++; }
+
+    public String[] getMedicos() {return medicos;}
+    public double[] getSalariosDia() {return salariosDia;}
+    public int getTotalMedicos() {return totalMedicos;}
+    public void incTotalMedicos() {totalMedicos++;}
 
     public int getTotalUtentesAtendidos() { return totalUtentesAtendidos; }
     public void addUtentes(int n) { totalUtentesAtendidos += n; }

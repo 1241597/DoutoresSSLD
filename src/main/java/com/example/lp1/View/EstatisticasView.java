@@ -22,8 +22,9 @@ public class EstatisticasView {
         do {
             System.out.println("\n=== ESTATÍSTICAS ===");
             System.out.println("1. Média de utentes por dia");
-            System.out.println("2. Utentes por sintoma");
-            System.out.println("3. Especialidades mais procuradas");
+            System.out.println("2. Salários por médico (dia)");
+            System.out.println("3. Utentes por sintoma");
+            System.out.println("4. Especialidades mais procuradas (Top 3)");
             System.out.println("0. Voltar");
             System.out.print("Opção: ");
 
@@ -40,10 +41,15 @@ public class EstatisticasView {
                     break;
 
                 case 2:
+                    mostrarSalarios();
+                    break;
+
+
+                case 3:
                     mostrarSintomas();
                     break;
 
-                case 3:
+                case 4:
                     mostrarEspecialidades();
                     break;
 
@@ -56,6 +62,17 @@ public class EstatisticasView {
             }
 
         } while (opcao != 0);
+    }
+
+    private void mostrarSalarios() {
+        Estatisticas e = controller.obterEstatisticas();
+
+        System.out.println("\nSalários por Médico (Dia):");
+        for (int i = 0; i < e.getTotalMedicos(); i++) {
+            System.out.printf("- %s: %.2f €%n",
+                    e.getMedicos()[i],
+                    e.getSalariosDia()[i]);
+        }
     }
 
     private void mostrarSintomas() {
@@ -71,10 +88,38 @@ public class EstatisticasView {
     private void mostrarEspecialidades() {
         Estatisticas e = controller.obterEstatisticas();
 
-        System.out.println("\nEspecialidades:");
-        for (int i = 0; i < e.getTotalEspecialidades(); i++) {
-            System.out.println("- " + e.getEspecialidades()[i]
-                    + ": " + e.getContagemEspecialidades()[i]);
+        String[] esp = e.getEspecialidades();
+        int[] cont = e.getContagemEspecialidades();
+        int total = e.getTotalEspecialidades();
+
+        // total de pacientes
+        int soma = 0;
+        for (int i = 0; i < total; i++) {
+            soma += cont[i];
+        }
+
+        // ordenação simples (bubble sort)
+        for (int i = 0; i < total - 1; i++) {
+            for (int j = 0; j < total - i - 1; j++) {
+                if (cont[j] < cont[j + 1]) {
+                    int tmpC = cont[j];
+                    cont[j] = cont[j + 1];
+                    cont[j + 1] = tmpC;
+
+                    String tmpE = esp[j];
+                    esp[j] = esp[j + 1];
+                    esp[j + 1] = tmpE;
+                }
+            }
+        }
+
+        System.out.println("\nTop 3 Especialidades:");
+        for (int i = 0; i < 3 && i < total; i++) {
+            double percent = soma == 0 ? 0 :
+                    (double) cont[i] * 100 / soma;
+
+            System.out.printf("%dº %s - %.2f%% (%d pacientes)%n",
+                    i + 1, esp[i], percent, cont[i]);
         }
     }
 }

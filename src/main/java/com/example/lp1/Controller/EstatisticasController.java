@@ -25,6 +25,10 @@ public class EstatisticasController {
         bll.registarDia(utentesAtendidos);
     }
 
+    public void registarSalarioMedico(String nome, double horas, double valorHora) {
+        bll.registarSalarioMedico(nome, horas, valorHora);
+    }
+
     public void registarSintoma(String nome) {
         bll.registarSintoma(nome);
     }
