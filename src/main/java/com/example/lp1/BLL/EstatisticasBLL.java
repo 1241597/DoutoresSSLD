@@ -22,6 +22,27 @@ public class EstatisticasBLL {
                 / estatisticas.getTotalDias();
     }
 
+    // --- SALÁRIOS POR MÉDICO
+    public void registarSalarioMedico(String nomeMedico, double horas, double valorHora) {
+
+        String[] medicos = estatisticas.getMedicos();
+        double[] salarios = estatisticas.getSalariosDia();
+
+        double salarioDia = horas * valorHora;
+
+        for (int i = 0; i < estatisticas.getTotalMedicos(); i++) {
+            if (medicos[i].equalsIgnoreCase(nomeMedico)) {
+                salarios[i] += salarioDia;
+                return;
+            }
+        }
+
+        medicos[estatisticas.getTotalMedicos()] = nomeMedico;
+        salarios[estatisticas.getTotalMedicos()] = salarioDia;
+        estatisticas.incTotalMedicos();
+    }
+
+
     // --- SINTOMAS
     public void registarSintoma(String nome) {
         String[] sintomas = estatisticas.getSintomas();
