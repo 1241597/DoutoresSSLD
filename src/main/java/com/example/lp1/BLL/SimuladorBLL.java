@@ -2,23 +2,26 @@ package com.example.lp1.BLL;
 
 /**
  * Gerencia a simulação de tempo no sistema hospitalar
- * Tempo discreto de 1 a 24 unidades, com avanço manual
+ * Tempo discreto de 1 a 24 unidades por dia, com avanço manual
  */
 public class SimuladorBLL {
     private int horaAtual;
+    private int diaAtual;
 
     public SimuladorBLL() {
         this.horaAtual = 1; // Começa na hora 1
+        this.diaAtual = 1; // Começa no dia 1
     }
 
     /**
      * Avança o tempo em uma unidade
-     * Retorna para 1 após 24
+     * Retorna para 1 após 24 e incrementa o dia
      */
     public void avancarTempo() {
         horaAtual++;
         if (horaAtual > 24) {
             horaAtual = 1;
+            diaAtual++; // Incrementa o dia quando passa para o próximo
         }
     }
 
@@ -27,6 +30,13 @@ public class SimuladorBLL {
      */
     public int getHoraAtual() {
         return horaAtual;
+    }
+
+    /**
+     * Retorna o dia atual do simulador
+     */
+    public int getDiaAtual() {
+        return diaAtual;
     }
 
     /**

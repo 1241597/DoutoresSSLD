@@ -5,6 +5,7 @@ import com.example.lp1.BLL.ConfiguracaoSimuladorBLL;
 import com.example.lp1.BLL.NotificacaoBLL;
 import com.example.lp1.BLL.SimuladorBLL;
 import com.example.lp1.BLL.TriagemBLL;
+import com.example.lp1.DAL.UtenteDAL;
 import com.example.lp1.Model.Especialidade;
 import com.example.lp1.Model.Medico;
 import com.example.lp1.Model.Sintoma;
@@ -24,6 +25,7 @@ public class SimuladorView {
     private AtribuicaoBLL atribuicaoBLL;
     private NotificacaoBLL notificacaoBLL;
     private ConfiguracaoSimuladorBLL configuracaoBLL;
+    private UtenteDAL utenteDAL;
 
     private Utente[] utentes;
     private int numUtentes;
@@ -39,10 +41,14 @@ public class SimuladorView {
         this.atribuicaoBLL = new AtribuicaoBLL();
         this.notificacaoBLL = new NotificacaoBLL();
         this.configuracaoBLL = new ConfiguracaoSimuladorBLL();
+        this.utenteDAL = new UtenteDAL();
 
         this.utentes = new Utente[10];
         this.numUtentes = 0;
         this.scanner = new Scanner(System.in);
+
+        // Limpar ficheiro de utentes no início do simulador
+        utenteDAL.limparFicheiro();
 
         // Carregar dados do sistema
         carregarDados();
@@ -123,7 +129,7 @@ public class SimuladorView {
         System.out.println("\n╔════════════════════════════════════════════╗");
         System.out.println("║   SIMULADOR DE URGÊNCIA HOSPITALAR        ║");
         System.out.println("╚════════════════════════════════════════════╝");
-        System.out.printf("Hora Atual: %d/24", simulador.getHoraAtual());
+        System.out.printf("Dia %d | Hora: %d/24", simulador.getDiaAtual(), simulador.getHoraAtual());
 
         int notificacoesPendentes = notificacaoBLL.contarNotificacoes();
         if (notificacoesPendentes > 0) {
@@ -155,7 +161,7 @@ public class SimuladorView {
             return;
         }
 
-        Utente novoUtente = new Utente(nome, simulador.getHoraAtual());
+        Utente novoUtente = new Utente(nome, simulador.getDiaAtual(), simulador.getHoraAtual());
 
         // Expandir array se necessário
         if (numUtentes >= utentes.length) {
@@ -168,7 +174,7 @@ public class SimuladorView {
         utentes[numUtentes++] = novoUtente;
 
         System.out.println("Utente " + nome + " registado com sucesso!");
-        System.out.println("   Hora de chegada: " + simulador.getHoraAtual());
+        System.out.println("   Dia " + simulador.getDiaAtual() + ", Hora " + simulador.getHoraAtual());
         System.out.println("   Status: " + novoUtente.getStatus().getDescricao());
     }
 
@@ -303,6 +309,9 @@ public class SimuladorView {
         }
 
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        // Guardar o utente no ficheiro agora que a triagem está completa
+        utenteDAL.adicionarUtente(utente);
     }
 
     private int pesquisarEAdicionarSintoma(Sintoma[] sintomasSelecionados, int numSintomas) {
@@ -566,16 +575,19 @@ public class SimuladorView {
     }
 
     private void avancarTempo() {
+        int diaAnterior = simulador.getDiaAtual();
         int horaAnterior = simulador.getHoraAtual();
         simulador.avancarTempo();
+        int diaAtual = simulador.getDiaAtual();
         int horaAtual = simulador.getHoraAtual();
 
         System.out.println("\nTEMPO AVANÇADO");
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        System.out.printf("De: %d/24 → Para: %d/24\n", horaAnterior, horaAtual);
+        System.out.printf("De: Dia %d, Hora %d/24 → Para: Dia %d, Hora %d/24\n", diaAnterior, horaAnterior, diaAtual,
+                horaAtual);
 
-        if (horaAtual == 1 && horaAnterior == 24) {
-            System.out.println("Novo dia iniciado!");
+        if (diaAtual > diaAnterior) {
+            System.out.println("🌅 Novo dia iniciado!");
         }
 
         // VERIFICAR ESCALAÇÃO DE URGÊNCIA
@@ -624,8 +636,8 @@ public class SimuladorView {
         }
 
         System.out.printf("%-20s %-15s %-12s %-20s %s\n",
-                "Nome", "Urgência", "Especialidade", "Status", "Hora Chegada");
-        System.out.println("─".repeat(85));
+                "Nome", "Urgência", "Especialidade", "Status", "Chegada (Dia/Hora)");
+        System.out.println("─".repeat(95));
 
         for (int i = 0; i < numUtentes; i++) {
             Utente u = utentes[i];
@@ -633,11 +645,12 @@ public class SimuladorView {
             String especialidade = u.getEspecialidadeCalculada() != null ? u.getEspecialidadeCalculada().getCodigo()
                     : "N/A";
 
-            System.out.printf("%-20s %-15s %-12s %-20s %d\n",
+            System.out.printf("%-20s %-15s %-12s %-20s D%d/H%d\n",
                     u.getNome(),
                     urgencia,
                     especialidade,
                     u.getStatus().getDescricao(),
+                    u.getDiaChegada(),
                     u.getHoraChegada());
         }
 
