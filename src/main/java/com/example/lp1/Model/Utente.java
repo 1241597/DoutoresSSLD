@@ -8,6 +8,7 @@ public class Utente {
     private Sintoma[] sintomas;
     private nivelUrgencia nivelUrgenciaCalculado;
     private Especialidade especialidadeCalculada;
+    private int diaChegada; // Dia em que o utente chegou ao hospital
     private int horaChegada;
     private int horaTriagem;
     private int horaUltimaEscalacao; // Hora em que a urgência foi verificada pela última vez
@@ -21,9 +22,10 @@ public class Utente {
     }
 
     // Novo construtor para o simulador
-    public Utente(String nome, int horaChegada) {
+    public Utente(String nome, int diaChegada, int horaChegada) {
         this.nome = nome;
         this.sintomas = new Sintoma[0];
+        this.diaChegada = diaChegada;
         this.horaChegada = horaChegada;
         this.status = StatusUtente.AGUARDANDO_TRIAGEM;
     }
@@ -58,6 +60,14 @@ public class Utente {
 
     public void setEspecialidadeCalculada(Especialidade especialidadeCalculada) {
         this.especialidadeCalculada = especialidadeCalculada;
+    }
+
+    public int getDiaChegada() {
+        return diaChegada;
+    }
+
+    public void setDiaChegada(int diaChegada) {
+        this.diaChegada = diaChegada;
     }
 
     public int getHoraChegada() {
@@ -99,7 +109,8 @@ public class Utente {
                 ", urgência=" + (nivelUrgenciaCalculado != null ? nivelUrgenciaCalculado : "N/A") +
                 ", especialidade=" + (especialidadeCalculada != null ? especialidadeCalculada.getCodigo() : "N/A") +
                 ", status=" + (status != null ? status.getDescricao() : "N/A") +
-                ", horaChegada=" + horaChegada +
+                ", dia=" + diaChegada +
+                ", hora=" + horaChegada +
                 '}';
     }
 }

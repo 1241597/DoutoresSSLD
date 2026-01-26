@@ -35,20 +35,35 @@ public class UtentesView {
             System.out.println("0. Voltar");
             System.out.print("Escolha: ");
             String in = scanner.nextLine();
-            try { opcao = in.isEmpty() ? -1 : Integer.parseInt(in); } catch (Exception e) { opcao = -1; }
+            try {
+                opcao = in.isEmpty() ? -1 : Integer.parseInt(in);
+            } catch (Exception e) {
+                opcao = -1;
+            }
 
             switch (opcao) {
-                case 1: listar(utentes); break;
-                case 2: utentes = criar(utentes, sintomasDisponiveis); break;
-                case 3: utentes = atualizar(utentes, sintomasDisponiveis); break;
-                case 4: utentes = eliminar(utentes); break;
+                case 1:
+                    listar(utentes);
+                    break;
+                case 2:
+                    utentes = criar(utentes, sintomasDisponiveis);
+                    break;
+                case 3:
+                    utentes = atualizar(utentes, sintomasDisponiveis);
+                    break;
+                case 4:
+                    utentes = eliminar(utentes);
+                    break;
                 case 5:
                     dal.gravarUtentes(trimArray(utentes));
                     utentes = dal.carregarUtentes(sintomasDisponiveis);
                     System.out.println("Gravado.");
                     break;
-                case 0: System.out.println("A voltar..."); break;
-                default: System.out.println("Inválido.");
+                case 0:
+                    System.out.println("A voltar...");
+                    break;
+                default:
+                    System.out.println("Inválido.");
             }
         } while (opcao != 0);
     }
@@ -59,21 +74,27 @@ public class UtentesView {
      * @param u array de Utente
      */
     private void listar(Utente[] u) {
-        if (u.length == 0) { System.out.println("Sem utentes."); return; }
-        for (int i = 0; i < u.length; i++) System.out.println(i + ". " + u[i].toString());
+        if (u.length == 0) {
+            System.out.println("Sem utentes.");
+            return;
+        }
+        for (int i = 0; i < u.length; i++)
+            System.out.println(i + ". " + u[i].toString());
     }
 
     /**
      * Cria novo utente a partir da entrada do utilizador.
      *
-     * @param utentes array atual de Utente
+     * @param utentes             array atual de Utente
      * @param sintomasDisponiveis array de Sintoma disponível
      * @return array com o utente adicionado
      */
     private Utente[] criar(Utente[] utentes, Sintoma[] sintomasDisponiveis) {
-        System.out.print("Nome utente: "); String nome = scanner.nextLine();
+        System.out.print("Nome utente: ");
+        String nome = scanner.nextLine();
         System.out.println("Escolha sintomas (índices separados por vírgula), ou vazio para nenhum:");
-        for (int i = 0; i < sintomasDisponiveis.length; i++) System.out.println(i + ". " + sintomasDisponiveis[i].getNome());
+        for (int i = 0; i < sintomasDisponiveis.length; i++)
+            System.out.println(i + ". " + sintomasDisponiveis[i].getNome());
         String sel = scanner.nextLine();
         Sintoma[] selSintomas;
         if (sel.trim().isEmpty()) {
@@ -82,12 +103,21 @@ public class UtentesView {
             String[] parts = sel.split(",");
             Sintoma[] list = new Sintoma[0];
             for (String p : parts) {
-                try { int idx = Integer.parseInt(p.trim()); if (idx >= 0 && idx < sintomasDisponiveis.length) list = appendSintoma(list, sintomasDisponiveis[idx]); } catch (Exception ignored) {}
+                try {
+                    int idx = Integer.parseInt(p.trim());
+                    if (idx >= 0 && idx < sintomasDisponiveis.length)
+                        list = appendSintoma(list, sintomasDisponiveis[idx]);
+                } catch (Exception ignored) {
+                }
             }
             selSintomas = list;
         }
         Utente novo = new Utente(nome, selSintomas);
         utentes = appendUtente(utentes, novo);
+
+        // Guardar o novo utente no ficheiro
+        dal.adicionarUtente(novo);
+
         System.out.println("Criado.");
         return utentes;
     }
@@ -95,25 +125,37 @@ public class UtentesView {
     /**
      * Atualiza utente existente.
      *
-     * @param utentes array de Utente
+     * @param utentes             array de Utente
      * @param sintomasDisponiveis array de Sintoma
      * @return array atualizado
      */
     private Utente[] atualizar(Utente[] utentes, Sintoma[] sintomasDisponiveis) {
         listar(utentes);
-        if (utentes.length == 0) return utentes;
-        System.out.print("Índice a atualizar: "); int idx = lerIntComDefault(-1);
-        if (idx < 0 || idx >= utentes.length) return utentes;
+        if (utentes.length == 0)
+            return utentes;
+        System.out.print("Índice a atualizar: ");
+        int idx = lerIntComDefault(-1);
+        if (idx < 0 || idx >= utentes.length)
+            return utentes;
         Utente u = utentes[idx];
-        System.out.print("Novo nome (" + u.getNome() + "): "); String n = scanner.nextLine(); if (!n.isEmpty()) u.setNome(n);
+        System.out.print("Novo nome (" + u.getNome() + "): ");
+        String n = scanner.nextLine();
+        if (!n.isEmpty())
+            u.setNome(n);
         System.out.println("Atualizar sintomas? (enter para manter)");
-        for (int i = 0; i < sintomasDisponiveis.length; i++) System.out.println(i + ". " + sintomasDisponiveis[i].getNome());
+        for (int i = 0; i < sintomasDisponiveis.length; i++)
+            System.out.println(i + ". " + sintomasDisponiveis[i].getNome());
         String s = scanner.nextLine();
         if (!s.isEmpty()) {
             String[] parts = s.split(",");
             Sintoma[] list = new Sintoma[0];
             for (String p : parts) {
-                try { int id = Integer.parseInt(p.trim()); if (id >= 0 && id < sintomasDisponiveis.length) list = appendSintoma(list, sintomasDisponiveis[id]); } catch (Exception ignored) {}
+                try {
+                    int id = Integer.parseInt(p.trim());
+                    if (id >= 0 && id < sintomasDisponiveis.length)
+                        list = appendSintoma(list, sintomasDisponiveis[id]);
+                } catch (Exception ignored) {
+                }
             }
             u.setSintomas(list);
         }
@@ -130,22 +172,31 @@ public class UtentesView {
      */
     private Utente[] eliminar(Utente[] utentes) {
         listar(utentes);
-        if (utentes.length == 0) return utentes;
-        System.out.print("Índice a eliminar: "); int idx = lerIntComDefault(-1);
-        if (idx < 0 || idx >= utentes.length) return utentes;
+        if (utentes.length == 0)
+            return utentes;
+        System.out.print("Índice a eliminar: ");
+        int idx = lerIntComDefault(-1);
+        if (idx < 0 || idx >= utentes.length)
+            return utentes;
         Utente[] r = new Utente[utentes.length - 1];
         int j = 0;
-        for (int i = 0; i < utentes.length; i++) if (i != idx) r[j++] = utentes[i];
+        for (int i = 0; i < utentes.length; i++)
+            if (i != idx)
+                r[j++] = utentes[i];
         System.out.println("Eliminado.");
         return r;
     }
 
     private Utente[] trimArray(Utente[] arr) {
         int count = 0;
-        for (Utente u : arr) if (u != null) count++;
+        for (Utente u : arr)
+            if (u != null)
+                count++;
         Utente[] r = new Utente[count];
         int j = 0;
-        for (Utente u : arr) if (u != null) r[j++] = u;
+        for (Utente u : arr)
+            if (u != null)
+                r[j++] = u;
         return r;
     }
 
@@ -165,6 +216,11 @@ public class UtentesView {
     }
 
     private int lerIntComDefault(int def) {
-        try { String s = scanner.nextLine(); return s.isEmpty() ? def : Integer.parseInt(s); } catch (Exception e) { return def; }
+        try {
+            String s = scanner.nextLine();
+            return s.isEmpty() ? def : Integer.parseInt(s);
+        } catch (Exception e) {
+            return def;
+        }
     }
 }
