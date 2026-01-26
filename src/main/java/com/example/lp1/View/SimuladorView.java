@@ -114,7 +114,7 @@ public class SimuladorView {
                     System.out.println(">> A voltar ao menu principal...");
                     break;
                 default:
-                    System.out.println("❌ Opção inválida.");
+                    System.out.println("Opção inválida.");
             }
         } while (opcao != 0);
     }
@@ -123,25 +123,25 @@ public class SimuladorView {
         System.out.println("\n╔════════════════════════════════════════════╗");
         System.out.println("║   SIMULADOR DE URGÊNCIA HOSPITALAR        ║");
         System.out.println("╚════════════════════════════════════════════╝");
-        System.out.printf("⏰ Hora Atual: %d/24", simulador.getHoraAtual());
+        System.out.printf("Hora Atual: %d/24", simulador.getHoraAtual());
 
         int notificacoesPendentes = notificacaoBLL.contarNotificacoes();
         if (notificacoesPendentes > 0) {
-            System.out.printf(" | 🔔 %d notificações", notificacoesPendentes);
+            System.out.printf(" | %d notificações", notificacoesPendentes);
         }
         System.out.println("\n");
     }
 
     private void mostrarMenu() {
         System.out.println("=== MENU PRINCIPAL ===");
-        System.out.println("1. 👤 Registar novo utente");
-        System.out.println("2. 🏥 Chamar utente para triagem");
-        System.out.println("3. 👨‍⚕️ Atribuir utente a médico");
-        System.out.println("4. ⏩ Avançar tempo");
-        System.out.println("5. 🪑 Ver sala de espera");
-        System.out.println("6. 👨‍⚕️ Ver estado dos médicos");
-        System.out.println("7. 🔔 Ver notificações");
-        System.out.println("0. ↩️  Voltar");
+        System.out.println("1. Registar novo utente");
+        System.out.println("2. Chamar utente para triagem");
+        System.out.println("3. Atribuir utente a médico");
+        System.out.println("4. Avançar tempo");
+        System.out.println("5. Ver sala de espera");
+        System.out.println("6. Ver estado dos médicos");
+        System.out.println("7. Ver notificações");
+        System.out.println("0. Voltar");
         System.out.print("\nEscolha: ");
     }
 
@@ -151,7 +151,7 @@ public class SimuladorView {
         String nome = scanner.nextLine();
 
         if (nome.isEmpty()) {
-            System.out.println("❌ Nome não pode estar vazio.");
+            System.out.println("Nome não pode estar vazio.");
             return;
         }
 
@@ -167,7 +167,7 @@ public class SimuladorView {
         }
         utentes[numUtentes++] = novoUtente;
 
-        System.out.println("✅ Utente " + nome + " registado com sucesso!");
+        System.out.println("Utente " + nome + " registado com sucesso!");
         System.out.println("   Hora de chegada: " + simulador.getHoraAtual());
         System.out.println("   Status: " + novoUtente.getStatus().getDescricao());
     }
@@ -192,7 +192,7 @@ public class SimuladorView {
         }
 
         if (countTriagem == 0) {
-            System.out.println("ℹ️ Não há utentes aguardando triagem.");
+            System.out.println("Não há utentes aguardando triagem.");
             return;
         }
 
@@ -210,7 +210,7 @@ public class SimuladorView {
                 return;
 
             if (escolha < 1 || escolha > countTriagem) {
-                System.out.println("❌ Seleção inválida.");
+                System.out.println("Seleção inválida.");
                 return;
             }
 
@@ -218,7 +218,7 @@ public class SimuladorView {
             realizarTriagem(selecionado);
 
         } catch (NumberFormatException e) {
-            System.out.println("❌ Entrada inválida.");
+            System.out.println("Entrada inválida.");
         }
     }
 
@@ -235,9 +235,9 @@ public class SimuladorView {
         while (continuar) {
             System.out.println("\n--- Sintomas selecionados: " + numSintomas + " ---");
 
-            System.out.println("\n1. 🔍 Pesquisar e adicionar sintoma");
-            System.out.println("2. ➕ Criar novo sintoma");
-            System.out.println("3. ✅ Concluir triagem");
+            System.out.println("\n1. Pesquisar e adicionar sintoma");
+            System.out.println("2. Criar novo sintoma");
+            System.out.println("3. Concluir triagem");
             System.out.print("Escolha: ");
 
             try {
@@ -254,16 +254,16 @@ public class SimuladorView {
                         continuar = false;
                         break;
                     default:
-                        System.out.println("❌ Opção inválida.");
+                        System.out.println("Opção inválida.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("❌ Entrada inválida.");
+                System.out.println("Entrada inválida.");
             }
         }
 
         // Finalizar triagem
         if (numSintomas == 0) {
-            System.out.println("⚠️ Nenhum sintoma selecionado. Triagem cancelada.");
+            System.out.println("Nenhum sintoma selecionado. Triagem cancelada.");
             utente.setStatus(StatusUtente.AGUARDANDO_TRIAGEM);
             return;
         }
@@ -287,7 +287,7 @@ public class SimuladorView {
         utente.setHoraUltimaEscalacao(simulador.getHoraAtual()); // Inicializar controle de escalação
 
         // Mostrar resultados
-        System.out.println("\n✅ TRIAGEM CONCLUÍDA");
+        System.out.println("\nTRIAGEM CONCLUÍDA");
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         System.out.println("Utente: " + utente.getNome());
         System.out.println("Sintomas: " + numSintomas);
@@ -299,18 +299,18 @@ public class SimuladorView {
         // Sugestão estatística
         String sugestao = triagemBLL.sugerirEspecialidadePorEstatistica(arrayStr, especialidades);
         if (sugestao != null) {
-            System.out.println("💡 " + sugestao);
+            System.out.println(sugestao);
         }
 
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     }
 
     private int pesquisarEAdicionarSintoma(Sintoma[] sintomasSelecionados, int numSintomas) {
-        System.out.print("\n🔍 Digite o nome do sintoma (ou parte): ");
+        System.out.print("\nDigite o nome do sintoma (ou parte): ");
         String busca = scanner.nextLine().toLowerCase();
 
         if (busca.isEmpty()) {
-            System.out.println("❌ Busca vaz ia.");
+            System.out.println("Busca vazia.");
             return numSintomas;
         }
 
@@ -324,12 +324,12 @@ public class SimuladorView {
         }
 
         if (countEncontrados == 0) {
-            System.out.println("❌ Nenhum sintoma encontrado com '" + busca + "'");
-            System.out.println("💡 Dica: Tente criar um novo sintoma (opção 2)");
+            System.out.println("Nenhum sintoma encontrado com '" + busca + "'");
+            System.out.println("Dica: Tente criar um novo sintoma (opção 2)");
             return numSintomas;
         }
 
-        System.out.println("\n📋 Sintomas encontrados:");
+        System.out.println("\nSintomas encontrados:");
         for (int i = 0; i < countEncontrados; i++) {
             Sintoma s = encontrados[i];
             System.out.printf("%d. %s [%s]", i + 1, s.getNome(), s.getUrgencia());
@@ -354,17 +354,17 @@ public class SimuladorView {
                 return numSintomas;
 
             if (escolha < 1 || escolha > countEncontrados) {
-                System.out.println("❌ Seleção inválida.");
+                System.out.println("Seleção inválida.");
                 return numSintomas;
             }
 
             Sintoma selecionado = encontrados[escolha - 1];
             sintomasSelecionados[numSintomas++] = selecionado;
-            System.out.println("✅ Sintoma '" + selecionado.getNome() + "' adicionado!");
+            System.out.println("Sintoma '" + selecionado.getNome() + "' adicionado!");
             return numSintomas;
 
         } catch (NumberFormatException e) {
-            System.out.println("❌ Entrada inválida.");
+            System.out.println("Entrada inválida.");
             return numSintomas;
         }
     }
@@ -375,7 +375,7 @@ public class SimuladorView {
         String nome = scanner.nextLine();
 
         if (nome.isEmpty()) {
-            System.out.println("❌ Nome não pode estar vazio.");
+            System.out.println("Nome não pode estar vazio.");
             return numSintomas;
         }
 
@@ -390,7 +390,7 @@ public class SimuladorView {
             int nivelEscolhido = Integer.parseInt(scanner.nextLine());
             urgencia = nivelUrgencia.fromNivelUrgencia(nivelEscolhido);
         } catch (Exception e) {
-            System.out.println("❌ Nível inválido. Usando VERDE por padrão.");
+            System.out.println("Nível inválido. Usando VERDE por padrão.");
             urgencia = nivelUrgencia.VERDE;
         }
 
@@ -412,13 +412,13 @@ public class SimuladorView {
                 esps = new Especialidade[] { especialidades[escolha - 1] };
             }
         } catch (NumberFormatException e) {
-            System.out.println("⚠️ Nenhuma especialidade selecionada.");
+            System.out.println("Nenhuma especialidade selecionada.");
         }
 
         Sintoma novoSintoma = new Sintoma(nome, urgencia, esps);
         sintomasSelecionados[numSintomas++] = novoSintoma;
 
-        System.out.println("✅ Novo sintoma '" + nome + "' criado e adicionado!");
+        System.out.println("Novo sintoma '" + nome + "' criado e adicionado!");
         return numSintomas;
     }
 
@@ -435,7 +435,7 @@ public class SimuladorView {
         }
 
         if (countAguardando == 0) {
-            System.out.println("ℹ️ Não há utentes aguardando médico.");
+            System.out.println("Não há utentes aguardando médico.");
             return;
         }
 
@@ -456,7 +456,7 @@ public class SimuladorView {
                 return;
 
             if (escolha < 1 || escolha > countAguardando) {
-                System.out.println("❌ Seleção inválida.");
+                System.out.println("Seleção inválida.");
                 return;
             }
 
@@ -473,17 +473,17 @@ public class SimuladorView {
             } else if (tipoAtribuicao == 2) {
                 atribuicaoManual(selecionado);
             } else {
-                System.out.println("❌ Opção inválida.");
+                System.out.println("Opção inválida.");
             }
 
         } catch (NumberFormatException e) {
-            System.out.println("❌ Entrada inválida.");
+            System.out.println("Entrada inválida.");
         }
     }
 
     private void atribuicaoAutomatica(Utente utente) {
         if (utente.getEspecialidadeCalculada() == null) {
-            System.out.println("❌ Não é possível atribuição automática.");
+            System.out.println("Não é possível atribuição automática.");
             System.out.println("   Especialidade não determinada. Use atribuição manual.");
             return;
         }
@@ -495,7 +495,7 @@ public class SimuladorView {
                 utente, medicos, simulador.getHoraAtual(), duracao);
 
         if (sucesso) {
-            System.out.println("✅ Utente atribuído automaticamente!");
+            System.out.println("Utente atribuído automaticamente!");
             // Encontrar o médico que ficou com o utente
             for (Medico m : medicos) {
                 if (m != null && m.getUtenteAtual() == utente) {
@@ -507,7 +507,7 @@ public class SimuladorView {
                 }
             }
         } else {
-            System.out.println("❌ Não há médicos disponíveis para a especialidade " +
+            System.out.println("Não há médicos disponíveis para a especialidade " +
                     utente.getEspecialidadeCalculada().getCodigo());
             System.out.println("   Utente permanece aguardando.");
         }
@@ -518,7 +518,7 @@ public class SimuladorView {
                 medicos, simulador.getHoraAtual());
 
         if (disponiveis.length == 0) {
-            System.out.println("❌ Não há médicos disponíveis no momento.");
+            System.out.println("Não há médicos disponíveis no momento.");
             return;
         }
 
@@ -540,7 +540,7 @@ public class SimuladorView {
                 return;
 
             if (escolha < 1 || escolha > disponiveis.length) {
-                System.out.println("❌ Seleção inválida.");
+                System.out.println("Seleção inválida.");
                 return;
             }
 
@@ -553,15 +553,15 @@ public class SimuladorView {
                     utente, medico, simulador.getHoraAtual(), duracao);
 
             if (sucesso) {
-                System.out.println("✅ Utente atribuído ao Dr(a). " + medico.getNome() + "!");
+                System.out.println("Utente atribuído ao Dr(a). " + medico.getNome() + "!");
                 System.out.println("   Duração prevista: " + duracao + " unidades de tempo");
                 System.out.println("   Fim previsto: hora " + medico.getHoraFimPrevista());
             } else {
-                System.out.println("❌ Erro na atribuição.");
+                System.out.println("Erro na atribuição.");
             }
 
         } catch (NumberFormatException e) {
-            System.out.println("❌ Entrada inválida.");
+            System.out.println("Entrada inválida.");
         }
     }
 
@@ -570,12 +570,12 @@ public class SimuladorView {
         simulador.avancarTempo();
         int horaAtual = simulador.getHoraAtual();
 
-        System.out.println("\n⏩ TEMPO AVANÇADO");
+        System.out.println("\nTEMPO AVANÇADO");
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         System.out.printf("De: %d/24 → Para: %d/24\n", horaAnterior, horaAtual);
 
         if (horaAtual == 1 && horaAnterior == 24) {
-            System.out.println("🌅 Novo dia iniciado!");
+            System.out.println("Novo dia iniciado!");
         }
 
         // VERIFICAR ESCALAÇÃO DE URGÊNCIA
@@ -584,10 +584,10 @@ public class SimuladorView {
         // VERIFICAR E FINALIZAR ATENDIMENTOS AUTOMATICAMENTE
         String[] finalizados = atribuicaoBLL.verificarEFinalizarAtendimentos(medicos, horaAtual);
         if (finalizados.length > 0) {
-            System.out.println("\n✅ ATENDIMENTOS FINALIZADOS AUTOMATICAMENTE:");
+            System.out.println("\nATENDIMENTOS FINALIZADOS AUTOMATICAMENTE:");
             for (String finalizado : finalizados) {
                 System.out.println("  - " + finalizado);
-                notificacaoBLL.adicionarNotificacao("✅ Atendimento finalizado: " + finalizado);
+                notificacaoBLL.adicionarNotificacao("Atendimento finalizado: " + finalizado);
             }
         }
 
@@ -606,7 +606,7 @@ public class SimuladorView {
         // Mostrar notificações imediatamente
         String[] notificacoes = notificacaoBLL.obterNotificacoes();
         if (notificacoes.length > 0) {
-            System.out.println("\n🔔 NOTIFICAÇÕES:");
+            System.out.println("\nNOTIFICAÇÕES:");
             for (String not : notificacoes) {
                 System.out.println("  " + not);
             }
@@ -619,7 +619,7 @@ public class SimuladorView {
         System.out.println("╚════════════════════════════════════════════╝");
 
         if (numUtentes == 0) {
-            System.out.println("ℹ️ Não há utentes registados.");
+            System.out.println("Não há utentes registados.");
             return;
         }
 
@@ -650,7 +650,7 @@ public class SimuladorView {
         System.out.println("╚════════════════════════════════════════════╝");
 
         if (medicos == null || medicos.length == 0) {
-            System.out.println("ℹ️ Não há médicos registados.");
+            System.out.println("Não há médicos registados.");
             return;
         }
 
@@ -677,13 +677,13 @@ public class SimuladorView {
                     turno += ")";
                 }
 
-                String disponivel = m.isDisponivel() ? "✅ Sim" : "❌ Não";
+                String disponivel = m.isDisponivel() ? "Sim" : "Não";
                 String atendendo = m.getUtenteAtual() != null ? m.getUtenteAtual().getNome() : "-";
 
                 // Destacar se médico está fora do horário mas atendendo
                 if (m.getUtenteAtual() != null &&
                         !m.isDisponivelNaHora(simulador.getHoraAtual())) {
-                    atendendo += " ⚠️";
+                    atendendo += " [!]";
                 }
 
                 System.out.printf("%-20s %-12s %-30s %-12s %s\n",
@@ -706,7 +706,7 @@ public class SimuladorView {
         String[] notificacoes = notificacaoBLL.obterELimparNotificacoes();
 
         if (notificacoes.length == 0) {
-            System.out.println("ℹ️ Não há notificações pendentes.");
+            System.out.println("Não há notificações pendentes.");
             return;
         }
 
@@ -714,7 +714,7 @@ public class SimuladorView {
             System.out.println((i + 1) + ". " + notificacoes[i]);
         }
 
-        System.out.println("\n✅ Notificações limpas.");
+        System.out.println("\nNotificações limpas.");
     }
 
     /**
@@ -765,7 +765,7 @@ public class SimuladorView {
 
                 // Gerar notificação
                 String mensagem = String.format(
-                        "⚠️ ESCALAÇÃO: Utente %s teve urgência escalada de %s para %s (aguardando %d unidades)",
+                        "ESCALAÇÃO: Utente %s teve urgência escalada de %s para %s (aguardando %d unidades)",
                         u.getNome(), urgenciaAtual, novaUrgencia, tempoEspera);
                 notificacaoBLL.adicionarNotificacao(mensagem);
 

@@ -50,9 +50,9 @@ public class NotificacaoBLL {
         // Notificar mudança de hora
         if (horaAtual != horaAnterior) {
             if (horaAtual == 1 && horaAnterior == 24) {
-                adicionarNotificacao("⏰ Novo dia iniciado! Hora atual: " + horaAtual);
+                adicionarNotificacao("Novo dia iniciado! Hora atual: " + horaAtual);
             } else {
-                adicionarNotificacao("⏰ Tempo avançado. Hora atual: " + horaAtual);
+                adicionarNotificacao("Tempo avançado. Hora atual: " + horaAtual);
             }
             horaAnterior = horaAtual;
         }
@@ -63,19 +63,19 @@ public class NotificacaoBLL {
                 if (m != null) {
                     // Médico entrando no turno
                     if (m.getHoraEntrada() == horaAtual && m.getUtenteAtual() == null) {
-                        adicionarNotificacao("👨‍⚕️ Dr(a). " + m.getNome() +
+                        adicionarNotificacao("Dr(a). " + m.getNome() +
                                 " (" + m.getEspecialidade().getCodigo() + ") entrou em serviço");
                     }
 
                     // Médico saindo do turno (se não estiver atendendo)
                     if (m.getHoraSaida() == horaAtual && m.getUtenteAtual() == null) {
-                        adicionarNotificacao("👋 Dr(a). " + m.getNome() +
+                        adicionarNotificacao("Dr(a). " + m.getNome() +
                                 " (" + m.getEspecialidade().getCodigo() + ") terminou o turno");
                     }
 
                     // Médico ainda atendendo após hora de saída
                     if (horaAtual > m.getHoraSaida() && m.getUtenteAtual() != null) {
-                        adicionarNotificacao("⚠️ Dr(a). " + m.getNome() +
+                        adicionarNotificacao("Dr(a). " + m.getNome() +
                                 " continua atendendo " + m.getUtenteAtual().getNome() +
                                 " após hora de saída");
                     }
@@ -99,13 +99,13 @@ public class NotificacaoBLL {
                     if (u.getNivelUrgenciaCalculado() != null &&
                             u.getNivelUrgenciaCalculado().getNivelUrgencia() == 3 &&
                             tempoEspera > 2) {
-                        adicionarNotificacao("🚨 URGENTE: " + u.getNome() +
+                        adicionarNotificacao("URGENTE: " + u.getNome() +
                                 " aguarda há " + tempoEspera + " horas (nível VERMELHO)");
                     }
 
                     // Alertar se qualquer paciente espera há mais de 5 horas
                     if (tempoEspera > 5) {
-                        adicionarNotificacao("⚠️ " + u.getNome() +
+                        adicionarNotificacao(u.getNome() +
                                 " aguarda há " + tempoEspera + " horas");
                     }
                 }
