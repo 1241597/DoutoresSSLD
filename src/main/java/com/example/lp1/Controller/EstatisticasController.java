@@ -9,6 +9,8 @@ public class EstatisticasController {
 
     public EstatisticasController(Estatisticas estatisticas) {
         bll = new EstatisticasBLL(estatisticas);
+        // carregar dados dos ficheiros para popular as estatísticas
+        bll.carregarDados();
     }
 
     // USADO PELA VIEW

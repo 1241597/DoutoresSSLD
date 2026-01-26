@@ -22,9 +22,9 @@ public class EstatisticasView {
         do {
             System.out.println("\n=== ESTATÍSTICAS ===");
             System.out.println("1. Média de utentes por dia");
-            System.out.println("2. Salários por médico (dia)");
-            System.out.println("3. Utentes por sintoma");
-            System.out.println("4. Especialidades mais procuradas (Top 3)");
+            System.out.println("2. Salários de médicos por dia");
+            System.out.println("3. Utentes por sintomas");
+            System.out.println("4. Top 3 de especialidades");
             System.out.println("0. Voltar");
             System.out.print("Opção: ");
 
