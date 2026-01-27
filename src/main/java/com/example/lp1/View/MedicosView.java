@@ -40,10 +40,10 @@ public class MedicosView {
         int opcao = -1;
         do {
             System.out.println("\n--- GESTÃO DE MÉDICOS ---");
-            System.out.println("1. Listar médicos");
-            System.out.println("2. Criar médico");
-            System.out.println("3. Atualizar médico");
-            System.out.println("4. Eliminar médico");
+            System.out.println("1. Listar");
+            System.out.println("2. Criar");
+            System.out.println("3. Atualizar");
+            System.out.println("4. Eliminar");
             System.out.println("5. Gravar alterações");
             System.out.println("0. Voltar");
             System.out.print("Escolha: ");
