@@ -11,7 +11,8 @@ public class GestaoFicheirosView {
      */
     public void executarGestaoView(Configuracao config) {
 
-        // Segurança: Se por algum motivo a config vier nula, abortamos para não dar erro.
+        // Segurança: Se por algum motivo a config vier nula, abortamos para não dar
+        // erro.
         if (config == null) {
             System.out.println("[ERRO] Configuração não carregada.");
             return;
@@ -90,8 +91,25 @@ public class GestaoFicheirosView {
 
         // Validação: Tem de ter exatamente 1 caracter
         if (novoSeparador != null && novoSeparador.length() == 1) {
-            config.setSeparadorFicheiro(novoSeparador);
-            System.out.println(">> Separador atualizado para: \"" + novoSeparador + "\"");
+            try {
+                // Chama o Controller para fazer a lógica de migração e gravação
+                // O 'controller' não está disponível aqui como variável local,
+                // mas podemos instanciar um novo ou pedir ao Main?
+                // Como não temos acesso fácil ao controller principal aqui, vamos instanciar um
+                // novo.
+                // Nota: Idealmente o controller seria passado para a View.
+                com.example.lp1.Controller.ConfiguracaoController ctrl = new com.example.lp1.Controller.ConfiguracaoController();
+
+                ctrl.alterarSeparador(novoSeparador);
+
+                // Atualizar o objeto local 'config' apenas para a visualização não ficar
+                // desatualizada
+                config.setSeparadorFicheiro(novoSeparador);
+
+                System.out.println(">> Separador atualizado para: \"" + novoSeparador + "\" (Ficheiros não migrados)");
+            } catch (Exception e) {
+                System.out.println(">> Erro ao alterar separador: " + e.getMessage());
+            }
         } else {
             System.out.println(">> Erro: O separador deve ser apenas um caracter.");
         }

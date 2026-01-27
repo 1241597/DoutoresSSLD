@@ -13,8 +13,12 @@ import java.util.Scanner;
  */
 public class UtentesView {
 
-    private UtenteDAL dal = new UtenteDAL();
-    private SintomaDAL sintomaDAL = new SintomaDAL();
+    // Carregar configuração para saber o separador atual
+    private com.example.lp1.DAL.ConfiguracaoDAL configDal = new com.example.lp1.DAL.ConfiguracaoDAL();
+    private String separador = configDal.carregarConfiguracao().getSeparadorFicheiro();
+
+    private UtenteDAL dal = new UtenteDAL(); // UtenteDAL continua com padrão |
+    private SintomaDAL sintomaDAL = new SintomaDAL(separador); // SintomaDAL usa o configurado
     private Scanner scanner = new Scanner(System.in);
 
     /**

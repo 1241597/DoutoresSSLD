@@ -8,14 +8,22 @@ import java.io.*;
 public class SintomaDAL {
 
     private static final String CAMINHO_FICHEIRO = "Ficheiros/sintomas.txt";
-    private static final String SEPARADOR = ";";
+    private String separador = ";";
+
+    public SintomaDAL() {
+    }
+
+    public SintomaDAL(String separador) {
+        this.separador = separador;
+    }
 
     public Sintoma[] carregarSintomas() {
         Sintoma[] sintomasTemp = new Sintoma[50];
         int index = 0;
 
         File file = new File(CAMINHO_FICHEIRO);
-        if (!file.exists()) return new Sintoma[0];
+        if (!file.exists())
+            return new Sintoma[0];
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String linha;
@@ -23,7 +31,7 @@ public class SintomaDAL {
                 linha = linha.trim();
 
                 if (!linha.isEmpty()) {
-                    String[] partes = linha.split(SEPARADOR);
+                    String[] partes = linha.split(separador);
 
                     if (partes.length >= 3) {
                         if (index >= sintomasTemp.length) {
@@ -64,6 +72,15 @@ public class SintomaDAL {
             System.out.println("Erro ao ler sintomas: " + e.getMessage());
         }
 
+        // --- VALIDAÇÃO DE SEGURANÇA ---
+        // Se o ficheiro existe e tem conteúdo, mas não lemos nenhum sintoma válido,
+        // assumimos erro de separador.
+        if (file.exists() && file.length() > 0 && index == 0) {
+            System.out.println("[AVISO] O separador '" + separador
+                    + "' parece incorreto no ficheiro de Sintomas. Nenhum registo carregado.");
+            return new Sintoma[0];
+        }
+
         Sintoma[] resultado = new Sintoma[index];
         System.arraycopy(sintomasTemp, 0, resultado, 0, index);
         return resultado;
@@ -77,18 +94,19 @@ public class SintomaDAL {
                     Sintoma s = lista[i];
 
                     // --- CONVERSÃO DO ENUM PARA TEXTO BONITO ---
-                    // O enum devolve "VERMELHA". Nós queremos "Vermelha" (para o ficheiro ficar igual)
+                    // O enum devolve "VERMELHA". Nós queremos "Vermelha" (para o ficheiro ficar
+                    // igual)
                     String nomeEnum = s.getUrgencia().name();
                     String corFormatada = nomeEnum.charAt(0) + nomeEnum.substring(1).toLowerCase();
 
                     // Montar a linha
-                    String linha = s.getNome() + SEPARADOR + corFormatada;
+                    String linha = s.getNome() + separador + corFormatada;
 
                     Especialidade[] esps = s.getEspecialidades();
                     if (esps != null) {
                         for (int j = 0; j < esps.length; j++) {
                             if (esps[j] != null) {
-                                linha += SEPARADOR + esps[j].getCodigo();
+                                linha += separador + esps[j].getCodigo();
                             }
                         }
                     }

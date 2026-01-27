@@ -19,6 +19,10 @@ public class ConfiguracaoController {
         bll.alterarPassword(novaPassword);
     }
 
+    public void alterarSeparador(String novoSeparador) throws Exception {
+        bll.alterarSeparador(novoSeparador);
+    }
+
     // --- Acesso ao Model (para a View poder ler/alterar) ---
 
     public Configuracao getConfiguracao() {
