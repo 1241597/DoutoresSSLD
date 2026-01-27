@@ -1,8 +1,5 @@
 package com.example.lp1.Model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Estatisticas {
 
     private int totalDias = 0;
@@ -16,7 +13,9 @@ public class Estatisticas {
     private int totalMedicos = 0;
 
     // Salários gravados por dia (snapshot no fim de cada dia)
-    private List<double[]> salariosPorDia = new ArrayList<>();
+    // Substitui ArrayList por double[][] com contador para evitar uso de ArrayList
+    private double[][] salariosPorDia = new double[1000][]; // suporta até 1000 dias por default
+    private int totalDiasSnapshot = 0;
 
     private String[] sintomas = new String[1000];
     private int[] contagemSintomas = new int[1000];
@@ -49,7 +48,14 @@ public class Estatisticas {
         for (int i = 0; i < totalMedicos; i++) {
             snapshot[i] = salariosDia[i];
         }
-        salariosPorDia.add(snapshot);
+        // garantir espaço
+        if (totalDiasSnapshot >= salariosPorDia.length) {
+            // expandir array (duplicar tamanho)
+            double[][] novo = new double[salariosPorDia.length * 2][];
+            for (int i = 0; i < salariosPorDia.length; i++) novo[i] = salariosPorDia[i];
+            salariosPorDia = novo;
+        }
+        salariosPorDia[totalDiasSnapshot++] = snapshot;
     }
 
     // Reset do acumulador de salarios do dia (preparar para o próximo dia)
@@ -57,8 +63,12 @@ public class Estatisticas {
         this.salariosDia = new double[200];
     }
 
-    public List<double[]> getSalariosPorDia() {
-        return salariosPorDia;
+    // Retorna um array com os snapshots gravados (cópia enxuta com o comprimento correto)
+    public double[][] getSalariosPorDia() {
+        if (totalDiasSnapshot == 0) return new double[0][];
+        double[][] copia = new double[totalDiasSnapshot][];
+        for (int i = 0; i < totalDiasSnapshot; i++) copia[i] = salariosPorDia[i];
+        return copia;
     }
 
     // Helper to reset medicos/salarios when re-loading from files (avoids duplication)
@@ -66,7 +76,8 @@ public class Estatisticas {
         this.medicos = new String[200];
         this.salariosDia = new double[200];
         this.totalMedicos = 0;
-        this.salariosPorDia = new ArrayList<>();
+        this.salariosPorDia = new double[1000][]; // reset storage
+        this.totalDiasSnapshot = 0;
     }
 
     // Helper to reset sintomas counters

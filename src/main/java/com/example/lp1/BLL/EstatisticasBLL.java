@@ -34,9 +34,11 @@ public class EstatisticasBLL {
     }
 
     public double calcularMediaDiaria() {
-        if (estatisticas.getTotalDias() == 0) return 0;
-        return (double) estatisticas.getTotalUtentesAtendidos()
-                / estatisticas.getTotalDias();
+        int diasContagem = estatisticas.getDiasSimulados();
+        if (diasContagem <= 0) {
+            diasContagem = Math.max(1, estatisticas.getTotalDias());
+        }
+        return (double) estatisticas.getTotalUtentesAtendidos() / diasContagem;
     }
 
     // --- SALÁRIOS POR MÉDICO
