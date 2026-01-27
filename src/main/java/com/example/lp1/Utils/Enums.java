@@ -27,9 +27,9 @@ public class Enums {
     }
 
     public enum StatusUtente {
-        AGUARDANDO_TRIAGEM("Aguardando Triagem"),
+        AGUARDANDO_TRIAGEM("A aguardar Triagem"),
         EM_TRIAGEM("Em Triagem"),
-        AGUARDANDO_MEDICO("Aguardando Médico"),
+        AGUARDANDO_MEDICO("A aguardar Médico"),
         COM_MEDICO("Com Médico"),
         CONCLUIDO("Concluído");
 
