@@ -60,7 +60,7 @@ public class Main {
 
                 case 2:
                     System.out.println(">> A abrir gestão do funcionamento...");
-                    SimuladorView simView = new SimuladorView();
+                    SimuladorView simView = new SimuladorView(estatisticas);
                     simView.iniciar();
                     break;
 
