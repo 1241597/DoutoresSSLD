@@ -6,7 +6,15 @@ import java.io.*;
 public class EspecialidadeDAL {
 
     private static final String CAMINHO_FICHEIRO = "Ficheiros/especialidades.txt";
-    private static final String SEPARADOR = ";";
+    private String separador = ";";
+
+    public EspecialidadeDAL() {
+        // Construtor vazio usa o padrão
+    }
+
+    public EspecialidadeDAL(String separador) {
+        this.separador = separador;
+    }
 
     /**
      * LÊ o ficheiro e retorna um array de objetos Especialidade.
@@ -28,7 +36,7 @@ public class EspecialidadeDAL {
 
                 // Ignorar linhas vazias
                 if (!linha.isEmpty()) {
-                    String[] partes = linha.split(SEPARADOR);
+                    String[] partes = linha.split(separador);
 
                     // Validar se tem as colunas necessárias (Codigo e Nome)
                     if (partes.length >= 2) {
@@ -49,6 +57,13 @@ public class EspecialidadeDAL {
             }
         } catch (IOException e) {
             System.out.println("Erro ao ler o ficheiro: " + e.getMessage());
+        }
+
+        // --- VALIDAÇÃO DE SEGURANÇA ---
+        if (file.exists() && file.length() > 0 && index == 0) {
+            System.out.println("[AVISO] O separador '" + separador
+                    + "' parece incorreto no ficheiro de Especialidades. Nenhum registo carregado.");
+            return new Especialidade[0];
         }
 
         // --- TRIMMING (CORTAR O EXCESSO) ---
@@ -80,7 +95,7 @@ public class EspecialidadeDAL {
 
             for (int i = 0; i < lista.length; i++) {
                 if (lista[i] != null) {
-                    String linha = lista[i].getCodigo() + SEPARADOR + lista[i].getNome();
+                    String linha = lista[i].getCodigo() + separador + lista[i].getNome();
                     writer.write(linha);
                     writer.newLine();
                 }

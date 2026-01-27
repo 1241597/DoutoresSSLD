@@ -13,15 +13,36 @@ import java.util.Scanner;
  */
 public class MedicosView {
 
-    private MedicoDAL medicoDAL = new MedicoDAL();
-    private EspecialidadeDAL espDAL = new EspecialidadeDAL();
+    // Carregar configuração para saber o separador
+    private com.example.lp1.DAL.ConfiguracaoDAL configDal = new com.example.lp1.DAL.ConfiguracaoDAL();
+    private String separator = configDal.carregarConfiguracao().getSeparadorFicheiro();
+
+    private MedicoDAL medicoDAL = new MedicoDAL(separator);
+    private EspecialidadeDAL espDAL = new EspecialidadeDAL(separator);
     private Scanner scanner = new Scanner(System.in);
+
+    private boolean gravacaoBloqueada = false;
 
     /**
      * Inicia menu de médicos.
      */
     public void iniciar() {
-        Medico[] medicos = medicoDAL.carregarMedicos();
+        Medico[] medicos;
+        try {
+            medicos = medicoDAL.carregarMedicos();
+            if (medicos == null) {
+                // Erro de leitura detetado (null)
+                medicos = new Medico[0];
+                gravacaoBloqueada = true; // Bloqueia gravação
+            } else {
+                gravacaoBloqueada = false;
+            }
+        } catch (RuntimeException e) {
+            // Fallback para outros erros não previstos
+            medicos = new Medico[0];
+            gravacaoBloqueada = true;
+        }
+
         Especialidade[] especialidades = espDAL.carregarEspecialidades();
 
         // tenta mapear códigos de especialidade para objetos carregados
@@ -48,32 +69,44 @@ public class MedicosView {
             System.out.println("0. Voltar");
             System.out.print("Escolha: ");
             String in = scanner.nextLine();
-            try { opcao = in.isEmpty() ? -1 : Integer.parseInt(in); } catch (Exception e) { opcao = -1; }
+            try {
+                opcao = in.isEmpty() ? -1 : Integer.parseInt(in);
+            } catch (Exception e) {
+                opcao = -1;
+            }
 
             switch (opcao) {
-                case 1: listarMedicos(medicos); break;
-                case 2: medicos = criarMedico(medicos, especialidades); break;
-                case 3: medicos = atualizarMedico(medicos, especialidades); break;
-                case 4: medicos = eliminarMedico(medicos); break;
+                case 1:
+                    listarMedicos(medicos);
+                    break;
+                case 2:
+                    medicos = criarMedico(medicos, especialidades);
+                    break;
+                case 3:
+                    medicos = atualizarMedico(medicos, especialidades);
+                    break;
+                case 4:
+                    medicos = eliminarMedico(medicos);
+                    break;
                 case 5:
-                    medicoDAL.gravarMedicos(trimArray(medicos));
-                    medicos = medicoDAL.carregarMedicos();
-                    // remapeia após gravar
-                    for (int i = 0; i < medicos.length; i++) {
-                        Especialidade e2 = medicos[i].getEspecialidade();
-                        if (e2 != null) {
-                            for (Especialidade ex : especialidades) {
-                                if (ex.getCodigo().equalsIgnoreCase(e2.getCodigo())) {
-                                    medicos[i].setEspecialidade(ex);
-                                    break;
-                                }
-                            }
+                    if (gravacaoBloqueada) {
+                        System.out.println("\n[AVISO] A gravação está bloqueada devido a erros de leitura.");
+                        System.out.println("Corrija o separador na Configuração antes de tentar gravar.");
+                    } else {
+                        medicoDAL.gravarMedicos(trimArray(medicos));
+                        try {
+                            medicos = medicoDAL.carregarMedicos();
+                        } catch (RuntimeException e) {
+                            System.out.println("Erro ao recarregar após gravar: " + e.getMessage());
                         }
                     }
                     System.out.println("Alterações gravadas.");
                     break;
-                case 0: System.out.println("A voltar..."); break;
-                default: System.out.println("Opção inválida.");
+                case 0:
+                    System.out.println("A voltar...");
+                    break;
+                default:
+                    System.out.println("Opção inválida.");
             }
         } while (opcao != 0);
     }
@@ -84,30 +117,43 @@ public class MedicosView {
      * @param medicos array de Medico
      */
     private void listarMedicos(Medico[] medicos) {
-        if (medicos.length == 0) { System.out.println("Sem médicos registados."); return; }
-        for (int i = 0; i < medicos.length; i++) System.out.println(i + ". " + medicos[i].toString());
+        if (medicos.length == 0) {
+            System.out.println("Sem médicos registados.");
+            return;
+        }
+        for (int i = 0; i < medicos.length; i++)
+            System.out.println(i + ". " + medicos[i].toString());
     }
 
     /**
      * Cria novo médico com validação de horas (0..23).
      *
-     * @param medicos array atual de Medico
+     * @param medicos        array atual de Medico
      * @param especialidades array de Especialidade disponível
      * @return array com o novo médico adicionado
      */
     private Medico[] criarMedico(Medico[] medicos, Especialidade[] especialidades) {
-        System.out.print("Nome: "); String nome = scanner.nextLine();
-        if (especialidades.length == 0) { System.out.println("Não existem especialidades. Crie uma antes."); return medicos; }
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        if (especialidades.length == 0) {
+            System.out.println("Não existem especialidades. Crie uma antes.");
+            return medicos;
+        }
         System.out.println("Escolha especialidade (índice):");
-        for (int i = 0; i < especialidades.length; i++) System.out.println(i + ". " + especialidades[i].getCodigo() + " - " + especialidades[i].getNome());
+        for (int i = 0; i < especialidades.length; i++)
+            System.out.println(i + ". " + especialidades[i].getCodigo() + " - " + especialidades[i].getNome());
         int idxEsp = lerIntComDefault(-1);
-        if (idxEsp < 0 || idxEsp >= especialidades.length) { System.out.println("Especialidade inválida."); return medicos; }
+        if (idxEsp < 0 || idxEsp >= especialidades.length) {
+            System.out.println("Especialidade inválida.");
+            return medicos;
+        }
 
         // Ler horas obrigatórias com validação 0..23
         double hEnt = lerHoraObrigatoriaEntre(0, 23, "Hora Entrada (0-23, ex: 8): ");
         double hSai = lerHoraObrigatoriaEntre(0, 23, "Hora Saída (0-23, ex: 17): ");
 
-        System.out.print("Salário por hora: "); double salario = lerDoubleComDefault(10.0);
+        System.out.print("Salário por hora: ");
+        double salario = lerDoubleComDefault(10.0);
         Medico novo = new Medico(nome, especialidades[idxEsp], hEnt, hSai, salario);
         medicos = appendMedico(medicos, novo);
         System.out.println("Médico criado.");
@@ -117,13 +163,14 @@ public class MedicosView {
     /**
      * Atualiza médico existente (enter para manter).
      *
-     * @param medicos array de Medico
+     * @param medicos        array de Medico
      * @param especialidades array de Especialidade
      * @return array atualizado
      */
     private Medico[] atualizarMedico(Medico[] medicos, Especialidade[] especialidades) {
         listarMedicos(medicos);
-        if (medicos.length == 0) return medicos;
+        if (medicos.length == 0)
+            return medicos;
 
         System.out.print("Índice do médico a atualizar: ");
         int idx = lerIntComDefault(-1);
@@ -137,13 +184,15 @@ public class MedicosView {
 
         System.out.print("Nome (" + m.getNome() + "): ");
         String nome = scanner.nextLine();
-        if (!nome.isEmpty()) m.setNome(nome);
+        if (!nome.isEmpty())
+            m.setNome(nome);
 
         System.out.println("Especialidades:");
         for (int i = 0; i < especialidades.length; i++) {
             System.out.println(i + ". " + especialidades[i].getCodigo() + " - " + especialidades[i].getNome());
         }
-        System.out.print("Índice especialidade atual (" + (m.getEspecialidade() != null ? m.getEspecialidade().getCodigo() : "nenhuma") + "): ");
+        System.out.print("Índice especialidade atual ("
+                + (m.getEspecialidade() != null ? m.getEspecialidade().getCodigo() : "nenhuma") + "): ");
         String inEsp = scanner.nextLine();
         if (!inEsp.isEmpty()) {
             try {
@@ -151,7 +200,8 @@ public class MedicosView {
                 if (ne >= 0 && ne < especialidades.length) {
                     m.setEspecialidade(especialidades[ne]);
                 }
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         }
 
         // Hora entrada: enter para manter ou pedir valor válido entre 0 e 23
@@ -162,7 +212,8 @@ public class MedicosView {
 
         System.out.print("Salário (" + m.getSalarioHora() + "): ");
         String sal = scanner.nextLine();
-        if (!sal.isEmpty()) m.setSalarioHora(Double.parseDouble(sal));
+        if (!sal.isEmpty())
+            m.setSalarioHora(Double.parseDouble(sal));
 
         medicos[idx] = m;
         System.out.println("Médico atualizado.");
@@ -177,12 +228,19 @@ public class MedicosView {
      */
     private Medico[] eliminarMedico(Medico[] medicos) {
         listarMedicos(medicos);
-        if (medicos.length == 0) return medicos;
-        System.out.print("Índice a eliminar: "); int idx = lerIntComDefault(-1);
-        if (idx < 0 || idx >= medicos.length) { System.out.println("Índice inválido."); return medicos; }
+        if (medicos.length == 0)
+            return medicos;
+        System.out.print("Índice a eliminar: ");
+        int idx = lerIntComDefault(-1);
+        if (idx < 0 || idx >= medicos.length) {
+            System.out.println("Índice inválido.");
+            return medicos;
+        }
         Medico[] r = new Medico[medicos.length - 1];
         int j = 0;
-        for (int i = 0; i < medicos.length; i++) if (i != idx) r[j++] = medicos[i];
+        for (int i = 0; i < medicos.length; i++)
+            if (i != idx)
+                r[j++] = medicos[i];
         System.out.println("Eliminado.");
         return r;
     }
@@ -196,27 +254,41 @@ public class MedicosView {
 
     private Medico[] trimArray(Medico[] arr) {
         int count = 0;
-        for (Medico m : arr) if (m != null) count++;
+        for (Medico m : arr)
+            if (m != null)
+                count++;
         Medico[] r = new Medico[count];
         int j = 0;
-        for (Medico m : arr) if (m != null) r[j++] = m;
+        for (Medico m : arr)
+            if (m != null)
+                r[j++] = m;
         return r;
     }
 
     private int lerIntComDefault(int def) {
-        try { String s = scanner.nextLine(); return s.isEmpty() ? def : Integer.parseInt(s); } catch (Exception e) { return def; }
+        try {
+            String s = scanner.nextLine();
+            return s.isEmpty() ? def : Integer.parseInt(s);
+        } catch (Exception e) {
+            return def;
+        }
     }
 
     private double lerDoubleComDefault(double def) {
-        try { String s = scanner.nextLine(); return s.isEmpty() ? def : Double.parseDouble(s); } catch (Exception e) { return def; }
+        try {
+            String s = scanner.nextLine();
+            return s.isEmpty() ? def : Double.parseDouble(s);
+        } catch (Exception e) {
+            return def;
+        }
     }
 
     // --- Novos helpers para validar horas ---
     /**
      * Lê hora obrigatória entre um intervalo, com prompt.
      *
-     * @param min valor mínimo (inclusive)
-     * @param max valor máximo (inclusive)
+     * @param min    valor mínimo (inclusive)
+     * @param max    valor máximo (inclusive)
      * @param prompt mensagem a mostrar ao usuário
      * @return valor da hora lida
      */
@@ -226,8 +298,9 @@ public class MedicosView {
             String s = scanner.nextLine();
             try {
                 double v = Double.parseDouble(s);
-                if (v >= min && v <= max) return v;
-                System.out.println("Valor inválido. Deve estar entre " + (int)min + " e " + (int)max + ".");
+                if (v >= min && v <= max)
+                    return v;
+                System.out.println("Valor inválido. Deve estar entre " + (int) min + " e " + (int) max + ".");
             } catch (Exception e) {
                 System.out.println("Entrada inválida. Insira um número (ex: 8).");
             }
@@ -237,7 +310,7 @@ public class MedicosView {
     /**
      * Lê hora com opção de manter valor atual (pressionar Enter).
      *
-     * @param atual valor atual da hora
+     * @param atual  valor atual da hora
      * @param prompt mensagem a mostrar ao usuário
      * @return novo valor da hora
      */
@@ -245,10 +318,12 @@ public class MedicosView {
         while (true) {
             System.out.print(prompt);
             String s = scanner.nextLine();
-            if (s.isEmpty()) return atual;
+            if (s.isEmpty())
+                return atual;
             try {
                 double v = Double.parseDouble(s);
-                if (v >= 0 && v <= 23) return v;
+                if (v >= 0 && v <= 23)
+                    return v;
                 System.out.println("Valor inválido. Deve estar entre 0 e 23.");
             } catch (Exception e) {
                 System.out.println("Entrada inválida. Insira um número ou pressione Enter para manter.");
