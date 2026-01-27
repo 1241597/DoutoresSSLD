@@ -59,18 +59,25 @@ public class ConfiguracaoView {
                     // 2. Passamos essa configuração para a View (em vez de null)
                     gestaoFicheirosView.executarGestaoView(configAtual);
 
-                    // 3. Quando voltar do menu, gravamos as alterações (caso o user tenha mudado a pasta)
+                    // 3. Quando voltar do menu, gravamos as alterações (caso o user tenha mudado a
+                    // pasta)
                     controller.gravarAlteracoes();
                     break;
 
                 case 2:
                     System.out.println(">> A abrir gestão dos Tempos de Consulta...");
+                    TemposConsultaView temposView = new TemposConsultaView();
+                    temposView.executarMenu();
                     break;
                 case 3:
                     System.out.println(">> A abrir gestão das Regras de Descanso dos Médicos...");
+                    RegrasDescansoView regrasView = new RegrasDescansoView();
+                    regrasView.executarMenu();
                     break;
                 case 4:
                     System.out.println(">> A abrir as Configurações da Dinâmica da Urgência dos Sintomas...");
+                    DinamicaUrgenciaView dinamicaView = new DinamicaUrgenciaView();
+                    dinamicaView.executarMenu();
                     break;
                 case 5:
                     System.out.println(">> A abrir as Configurações de Segurança...");

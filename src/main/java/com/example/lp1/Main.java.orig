@@ -22,6 +22,22 @@ public class Main {
 
         System.out.println("[SISTEMA] Carregamento concluído.\n");
 
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+
+        // =========================================================
+        // 1. CARREGAMENTO INICIAL
+        // =========================================================
+        System.out.println("\n[SISTEMA] A carregar dados para a memória...");
+
+        Utils utils = new Utils();
+        // A Utils já usa internamente a configuração para saber de onde ler
+        utils.carregarFicheiros();
+
+        System.out.println("[SISTEMA] Carregamento concluído.\n");
+
         // Criar o objecto de Estatisticas que será passado para a view
         Estatisticas estatisticas = new Estatisticas();
 
@@ -35,7 +51,7 @@ public class Main {
             System.out.println("\n=== HOSPITAL MANAGEMENT SYSTEM ===");
             System.out.println("1. Gestão de Médicos, Especialidades e Sintomas");
             System.out.println("2. Gestão do funcionamento do Hospital");
-            System.out.println("3. Consultar Estatísticas");
+            System.out.println("3. Consultar Estatísticas e Notificações");
             System.out.println("4. Configurações (Acesso Restrito)");
             System.out.print("0. Sair | Escolha uma opção: ");
 
