@@ -75,15 +75,15 @@ public class EstatisticasView {
         nf.setMaximumFractionDigits(2);
 
         // Prefer snapshots per day if available (each snapshot corresponds to a completed day)
-        java.util.List<double[]> snapshots = e.getSalariosPorDia();
-        int totalDiasCompletos = snapshots != null ? snapshots.size() : 0;
+        double[][] snapshots = e.getSalariosPorDia();
+        int totalDiasCompletos = snapshots != null ? snapshots.length : 0;
 
         if (totalDiasCompletos > 0) {
             for (int dia = 1; dia <= totalDiasCompletos; dia++) {
                 System.out.println();
                 System.out.println("-------- Dia " + dia + " --------");
                 System.out.println("Salários por Médico (Dia):");
-                double[] snapshot = snapshots.get(dia - 1);
+                double[] snapshot = snapshots[dia - 1];
                 int nMedicos = Math.min(snapshot.length, e.getTotalMedicos());
                 for (int i = 0; i < nMedicos; i++) {
                     String valor = nf.format(snapshot[i]);
