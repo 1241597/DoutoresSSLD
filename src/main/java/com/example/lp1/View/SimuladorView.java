@@ -587,7 +587,7 @@ public class SimuladorView {
                 horaAtual);
 
         if (diaAtual > diaAnterior) {
-            System.out.println("🌅 Novo dia iniciado!");
+            System.out.println("Novo dia iniciado!");
         }
 
         // VERIFICAR ESCALAÇÃO DE URGÊNCIA

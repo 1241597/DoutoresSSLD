@@ -2,57 +2,90 @@ package com.example.lp1.Model;
 
 public class Estatisticas {
 
-    private int totalDias;
-    private int totalUtentesAtendidos;
+    private int totalDias = 0;
+    private int totalUtentesAtendidos = 0;
 
-    private String[] medicos;
-    private double[] salariosDia;
-    private int totalMedicos;
+    private String[] medicos = new String[200];
+    private double[] salariosDia = new double[200];
+    private int totalMedicos = 0;
 
-    private String[] sintomas;
-    private int[] contagemSintomas;
-    private int totalSintomas;
+    private String[] sintomas = new String[1000];
+    private int[] contagemSintomas = new int[1000];
+    private int totalSintomas = 0;
 
-    private String[] especialidades;
-    private int[] contagemEspecialidades;
-    private int totalEspecialidades;
+    private String[] especialidades = new String[200];
+    private int[] contagemEspecialidades = new int[200];
+    private int totalEspecialidades = 0;
 
+    // CONSTRUTOR
     public Estatisticas() {
-        totalDias = 0;
-        totalUtentesAtendidos = 0;
-
-        medicos = new String[50];
-        salariosDia = new double[50];
-        totalMedicos = 0;
-
-        sintomas = new String[100];
-        contagemSintomas = new int[100];
-        totalSintomas = 0;
-
-        especialidades = new String[20];
-        contagemEspecialidades = new int[20];
-        totalEspecialidades = 0;
     }
 
-    // getters e setters
-    public int getTotalDias() { return totalDias; }
-    public void incDias() { totalDias++; }
+    // MÉTODOS para média diaria
+    public void incDias() {
+        totalDias++;
+    }
 
-    public String[] getMedicos() {return medicos;}
-    public double[] getSalariosDia() {return salariosDia;}
-    public int getTotalMedicos() {return totalMedicos;}
-    public void incTotalMedicos() {totalMedicos++;}
+    public void addUtentes(int n) {
+        totalUtentesAtendidos += n;
+    }
 
-    public int getTotalUtentesAtendidos() { return totalUtentesAtendidos; }
-    public void addUtentes(int n) { totalUtentesAtendidos += n; }
+    public int getTotalDias() {
+        return totalDias;
+    }
 
-    public String[] getSintomas() { return sintomas; }
-    public int[] getContagemSintomas() { return contagemSintomas; }
-    public int getTotalSintomas() { return totalSintomas; }
-    public void incTotalSintomas() { totalSintomas++; }
+    public int getTotalUtentesAtendidos() {
+        return totalUtentesAtendidos;
+    }
 
-    public String[] getEspecialidades() { return especialidades; }
-    public int[] getContagemEspecialidades() { return contagemEspecialidades; }
-    public int getTotalEspecialidades() { return totalEspecialidades; }
-    public void incTotalEspecialidades() { totalEspecialidades++; }
+    // MÉDICOS
+    public String[] getMedicos() {
+        return medicos;
+    }
+
+    public double[] getSalariosDia() {
+        return salariosDia;
+    }
+
+    public int getTotalMedicos() {
+        return totalMedicos;
+    }
+
+    public void incTotalMedicos() {
+        totalMedicos++;
+    }
+
+    // SINTOMAS
+    public String[] getSintomas() {
+        return sintomas;
+    }
+
+    public int[] getContagemSintomas() {
+        return contagemSintomas;
+    }
+
+    public int getTotalSintomas() {
+        return totalSintomas;
+    }
+
+    public void incTotalSintomas() {
+        totalSintomas++;
+    }
+
+    // ESPECIALIDADES
+    public String[] getEspecialidades() {
+        return especialidades;
+    }
+
+    public int[] getContagemEspecialidades() {
+        return contagemEspecialidades;
+    }
+
+    public int getTotalEspecialidades() {
+        return totalEspecialidades;
+    }
+
+    public void incTotalEspecialidades() {
+        totalEspecialidades++;
+    }
 }
