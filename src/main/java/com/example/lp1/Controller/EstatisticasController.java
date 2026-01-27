@@ -7,10 +7,18 @@ public class EstatisticasController {
 
     private EstatisticasBLL bll;
 
+    // Default: carregar os ficheiros
     public EstatisticasController(Estatisticas estatisticas) {
+        this(estatisticas, true);
+    }
+
+    // Permite controlar se deve carregar os ficheiros (evita duplo carregamento)
+    public EstatisticasController(Estatisticas estatisticas, boolean carregarDados) {
         bll = new EstatisticasBLL(estatisticas);
-        // carregar dados dos ficheiros para popular as estatísticas
-        bll.carregarDados();
+        if (carregarDados) {
+            // carregar dados dos ficheiros para popular as estatísticas
+            bll.carregarDados();
+        }
     }
 
     // USADO PELA VIEW
