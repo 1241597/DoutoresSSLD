@@ -5,11 +5,13 @@ import com.example.lp1.BLL.ConfiguracaoSimuladorBLL;
 import com.example.lp1.BLL.NotificacaoBLL;
 import com.example.lp1.BLL.SimuladorBLL;
 import com.example.lp1.BLL.TriagemBLL;
+import com.example.lp1.Controller.EstatisticasController;
 import com.example.lp1.DAL.UtenteDAL;
 import com.example.lp1.Model.Especialidade;
 import com.example.lp1.Model.Medico;
 import com.example.lp1.Model.Sintoma;
 import com.example.lp1.Model.Utente;
+import com.example.lp1.Model.Estatisticas;
 import com.example.lp1.Utils.Enums.StatusUtente;
 import com.example.lp1.Utils.Enums.nivelUrgencia;
 import com.example.lp1.Utils.Utils;
@@ -27,6 +29,8 @@ public class SimuladorView {
     private ConfiguracaoSimuladorBLL configuracaoBLL;
     private UtenteDAL utenteDAL;
 
+    private EstatisticasController estatController;
+
     private Utente[] utentes;
     private int numUtentes;
     private Medico[] medicos;
@@ -35,13 +39,16 @@ public class SimuladorView {
 
     private Scanner scanner;
 
-    public SimuladorView() {
+    // Modificado para receber a instância de Estatisticas do Main
+    public SimuladorView(Estatisticas estatisticas) {
         this.simulador = new SimuladorBLL();
         this.triagemBLL = new TriagemBLL();
         this.atribuicaoBLL = new AtribuicaoBLL();
         this.notificacaoBLL = new NotificacaoBLL();
         this.configuracaoBLL = new ConfiguracaoSimuladorBLL();
         this.utenteDAL = new UtenteDAL();
+
+        this.estatController = new EstatisticasController(estatisticas, false);
 
         this.utentes = new Utente[10];
         this.numUtentes = 0;
@@ -588,6 +595,10 @@ public class SimuladorView {
 
         if (diaAtual > diaAnterior) {
             System.out.println("Novo dia iniciado!");
+            // Registar novo dia nas estatísticas (0 utentes atendidos por omissão)
+            if (this.estatController != null) {
+                this.estatController.registarDia(0);
+            }
         }
 
         // VERIFICAR ESCALAÇÃO DE URGÊNCIA

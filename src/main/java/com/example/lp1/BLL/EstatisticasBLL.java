@@ -21,14 +21,24 @@ public class EstatisticasBLL {
 
     // --- MÉDIA DIÁRIA
     public void registarDia(int utentesAtendidos) {
+        // Before incrementing dias, snapshot current daily salaries so they represent the day that finished
+        estatisticas.snapshotSalariosDoDia();
+
         estatisticas.incDias();
         estatisticas.addUtentes(utentesAtendidos);
+        // marcar que este dia foi completado na simulação (útil para mostrar apenas dias completos)
+        estatisticas.incDiasSimulados();
+
+        // Reset the per-day accumulators so next day's salaries start from zero
+        estatisticas.resetSalariosDiaAtual();
     }
 
     public double calcularMediaDiaria() {
-        if (estatisticas.getTotalDias() == 0) return 0;
-        return (double) estatisticas.getTotalUtentesAtendidos()
-                / estatisticas.getTotalDias();
+        int diasContagem = estatisticas.getDiasSimulados();
+        if (diasContagem <= 0) {
+            diasContagem = Math.max(1, estatisticas.getTotalDias());
+        }
+        return (double) estatisticas.getTotalUtentesAtendidos() / diasContagem;
     }
 
     // --- SALÁRIOS POR MÉDICO
@@ -91,6 +101,12 @@ public class EstatisticasBLL {
     // Carrega dados dos ficheiros e popula Estatisticas
     public void carregarDados() {
         Map<String, String> codigoParaNome = new HashMap<>();
+
+        // Reset previous data to make method idempotent
+        estatisticas.resetMedicosData();
+        estatisticas.resetSintomasData();
+        estatisticas.resetEspecialidadesData();
+        // Note: not resetting diasSimulados because it represents runtime-simulated completed days
 
         // 1) carregar especialidades (código -> nome)
         try {
@@ -169,10 +185,10 @@ public class EstatisticasBLL {
             System.out.println("[Estatisticas] Erro ao ler Ficheiros/utentes.txt: " + e.getMessage());
         }
 
-        // configurar dias e utentes nas estatisticas
+        // configurar dias e utentes nas estatisticas (deterministicamente, não acumulando)
         int dias = Math.max(1, diasUnicos.size()); // pelo menos 1 dia
-        for (int i = 0; i < dias; i++) estatisticas.incDias();
-        if (totalUtentes > 0) estatisticas.addUtentes(totalUtentes);
+        estatisticas.setTotalDias(dias);
+        estatisticas.setTotalUtentesAtendidos(totalUtentes);
     }
 
     // GET

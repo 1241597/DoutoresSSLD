@@ -26,17 +26,42 @@ public class Utils {
      * Método principal que chama as DALs e processa as ligações
      */
     public void carregarFicheiros() {
-        // 1. Instanciar as DALs
-        EspecialidadeDAL dalEsp = new EspecialidadeDAL();
-        MedicoDAL dalMed = new MedicoDAL();
-        SintomaDAL dalSint = new SintomaDAL();
+        // 1. Carregar Configuração para saber o separador
+        com.example.lp1.DAL.ConfiguracaoDAL configDal = new com.example.lp1.DAL.ConfiguracaoDAL();
+        com.example.lp1.Model.Configuracao config = configDal.carregarConfiguracao();
+        String separador = config.getSeparadorFicheiro();
 
-        // 2. Carregar os dados para as variáveis locais
-        this.especialidades = dalEsp.carregarEspecialidades();
-        this.medicos = dalMed.carregarMedicos();
-        this.sintomas = dalSint.carregarSintomas();
+        System.out.println("[SISTEMA] A usar separador: '" + separador + "'");
 
-        // 3. Ligar os objetos (Substituir códigos por objetos reais)
+        // 2. Instanciar as DALs com o separador
+        EspecialidadeDAL dalEsp = new EspecialidadeDAL(separador);
+        MedicoDAL dalMed = new MedicoDAL(separador);
+        SintomaDAL dalSint = new SintomaDAL(separador);
+
+        // 3. Carregar os dados para as variáveis locais
+        // Usamos try-catch individual para permitir que a app carregue o que conseguir
+        try {
+            this.especialidades = dalEsp.carregarEspecialidades();
+        } catch (RuntimeException e) {
+            System.out.println("[Utils] Erro a ler Especialidades: " + e.getMessage());
+            this.especialidades = new com.example.lp1.Model.Especialidade[0];
+        }
+
+        try {
+            this.medicos = dalMed.carregarMedicos();
+        } catch (RuntimeException e) {
+            System.out.println("[Utils] Erro a ler Médicos: " + e.getMessage());
+            this.medicos = new com.example.lp1.Model.Medico[0];
+        }
+
+        try {
+            this.sintomas = dalSint.carregarSintomas();
+        } catch (RuntimeException e) {
+            System.out.println("[Utils] Erro a ler Sintomas: " + e.getMessage());
+            this.sintomas = new com.example.lp1.Model.Sintoma[0];
+        }
+
+        // 4. Ligar os objetos
         associarMedicosAEspecialidades();
         associarSintomasAEspecialidades();
 

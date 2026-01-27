@@ -7,7 +7,14 @@ import java.io.*;
 public class MedicoDAL {
 
     private static final String CAMINHO_FICHEIRO = "Ficheiros/medicos.txt";
-    private static final String SEPARADOR = ";";
+    private String separador = ";";
+
+    public MedicoDAL() {
+    }
+
+    public MedicoDAL(String separador) {
+        this.separador = separador;
+    }
 
     /**
      * Carrega os médicos do ficheiro para um vetor.
@@ -22,17 +29,20 @@ public class MedicoDAL {
             return new Medico[0];
         }
 
+        boolean leuAlgumaLinha = false;
+        int linhasValidas = 0;
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String linha;
             while ((linha = reader.readLine()) != null) {
                 linha = linha.trim();
 
                 if (!linha.isEmpty()) {
-                    String[] partes = linha.split(SEPARADOR);
+                    leuAlgumaLinha = true;
+                    String[] partes = linha.split(separador);
 
                     // O ficheiro tem: Nome;Sigla;HoraEnt;HoraSai;Salario
                     if (partes.length == 5) {
-
                         // Verificar se precisamos de aumentar o array
                         if (index >= medicosTemp.length) {
                             medicosTemp = expandirArray(medicosTemp);
@@ -41,30 +51,35 @@ public class MedicoDAL {
                         // --- EXTRAÇÃO DOS DADOS ---
                         String nome = partes[0];
                         String codEspecialidade = partes[1];
-
-                        // Conversão de String para Double
                         double hEntrada = Double.parseDouble(partes[2]);
                         double hSaida = Double.parseDouble(partes[3]);
                         double salario = Double.parseDouble(partes[4]);
 
-                        // --- CRIAÇÃO DO OBJETO ESPECIALIDADE ---
-                        // Como o ficheiro só tem o código "CARD", criamos um objeto com o código.
-                        // O nome fica "Indefinido" porque não está neste ficheiro de texto.
+                        // --- CRIAÇÃO DOS OBJETOS ---
                         Especialidade espObj = new Especialidade(codEspecialidade, "Indefinido");
-
-                        // --- CRIAÇÃO DO OBJETO MEDICO ---
                         Medico m = new Medico(nome, espObj, hEntrada, hSaida, salario);
 
-                        // Guardar no vetor
                         medicosTemp[index++] = m;
+                        linhasValidas++;
 
                     } else {
-                        System.out.println("Linha com formato errado: " + linha);
+                        System.out.println(
+                                "Linha com formato errado (esperado 5 campos, obteve " + partes.length + "): " + linha);
                     }
                 }
             }
         } catch (IOException | NumberFormatException e) {
             System.out.println("Erro ao ler ficheiro: " + e.getMessage());
+        }
+
+        // --- VALIDAÇÃO DE SEGURANÇA ---
+        // Se o ficheiro não estava vazio, mas não conseguimos ler NENHUMA linha válida,
+        // é muito provável que o separador esteja errado.
+        // Lançamos exceção para impedir que a View grave uma lista vazia por cima!
+        if (leuAlgumaLinha && linhasValidas == 0) {
+            System.out.println("[AVISO] O separador '" + separador
+                    + "' parece incorreto no ficheiro de Médicos. Nenhum registo carregado.");
+            return new Medico[0];
         }
 
         // Criar array final com tamanho exato
@@ -95,10 +110,10 @@ public class MedicoDAL {
                     // assumindo que getEspecialidade() nunca é nulo.
                     String codEsp = lista[i].getEspecialidade().getCodigo();
 
-                    String linha = lista[i].getNome() + SEPARADOR +
-                            codEsp + SEPARADOR +
-                            lista[i].getHoraEntrada() + SEPARADOR +
-                            lista[i].getHoraSaida() + SEPARADOR +
+                    String linha = lista[i].getNome() + separador +
+                            codEsp + separador +
+                            lista[i].getHoraEntrada() + separador +
+                            lista[i].getHoraSaida() + separador +
                             lista[i].getSalarioHora();
 
                     writer.write(linha);

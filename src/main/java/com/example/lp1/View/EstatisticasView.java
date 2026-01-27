@@ -4,6 +4,8 @@ import com.example.lp1.Controller.EstatisticasController;
 import com.example.lp1.Model.Estatisticas;
 
 import java.util.Scanner;
+import java.util.Locale;
+import java.text.NumberFormat;
 
 public class EstatisticasView {
 
@@ -67,11 +69,49 @@ public class EstatisticasView {
     private void mostrarSalarios() {
         Estatisticas e = controller.obterEstatisticas();
 
-        System.out.println("\nSalários por Médico (Dia):");
-        for (int i = 0; i < e.getTotalMedicos(); i++) {
-            System.out.printf("- %s: %.2f €%n",
-                    e.getMedicos()[i],
-                    e.getSalariosDia()[i]);
+        // Use Portuguese locale so decimals use comma
+        NumberFormat nf = NumberFormat.getNumberInstance(new Locale("pt", "PT"));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+
+        // Prefer snapshots per day if available (each snapshot corresponds to a completed day)
+        double[][] snapshots = e.getSalariosPorDia();
+        int totalDiasCompletos = snapshots != null ? snapshots.length : 0;
+
+        if (totalDiasCompletos > 0) {
+            for (int dia = 1; dia <= totalDiasCompletos; dia++) {
+                System.out.println();
+                System.out.println("-------- Dia " + dia + " --------");
+                System.out.println("Salários por Médico (Dia):");
+                double[] snapshot = snapshots[dia - 1];
+                int nMedicos = Math.min(snapshot.length, e.getTotalMedicos());
+                for (int i = 0; i < nMedicos; i++) {
+                    String valor = nf.format(snapshot[i]);
+                    System.out.printf("- %s: %s €%n",
+                            e.getMedicos()[i],
+                            valor);
+                }
+            }
+            return;
+        }
+
+        // Fallback: preferir dias simulados completos (incrementados por avancarTempo/registarDia)
+        int diasSimulados = e.getDiasSimulados();
+        if (diasSimulados <= 0) {
+            // fallback para os dias carregados dos ficheiros (ou 1 se não houver)
+            diasSimulados = Math.max(1, e.getTotalDias());
+        }
+
+        for (int dia = 1; dia <= diasSimulados; dia++) {
+            System.out.println();
+            System.out.println("-------- Dia " + dia + " --------");
+            System.out.println("Salários por Médico (Dia):");
+            for (int i = 0; i < e.getTotalMedicos(); i++) {
+                String valor = nf.format(e.getSalariosDia()[i]);
+                System.out.printf("- %s: %s €%n",
+                        e.getMedicos()[i],
+                        valor);
+            }
         }
     }
 
