@@ -35,7 +35,7 @@ public class Main {
             System.out.println("\n=== HOSPITAL MANAGEMENT SYSTEM ===");
             System.out.println("1. Gestão de Médicos, Especialidades e Sintomas");
             System.out.println("2. Gestão do funcionamento do Hospital");
-            System.out.println("3. Consultar Estatísticas e Notificações");
+            System.out.println("3. Consultar Estatísticas");
             System.out.println("4. Configurações (Acesso Restrito)");
             System.out.print("0. Sair | Escolha uma opção: ");
 
